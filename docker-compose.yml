@@ -1,0 +1,227 @@
+version: '3.8'
+
+################################################################################
+# PiPassive - Docker Compose Configuration
+# Gestisce tutti i servizi di passive income
+################################################################################
+
+services:
+  
+  # =============================================================================
+  # HONEYGAIN - Condivisione banda internet
+  # =============================================================================
+  honeygain:
+    image: honeygain/honeygain:latest
+    container_name: honeygain
+    restart: unless-stopped
+    command: -tou-accept -email ${HONEYGAIN_EMAIL} -pass ${HONEYGAIN_PASSWORD} -device ${HONEYGAIN_DEVICE_NAME:-PiPassive}
+    networks:
+      - pipassive
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # =============================================================================
+  # EARNAPP - Guadagna condividendo banda
+  # =============================================================================
+  earnapp:
+    image: fazalfarhan01/earnapp:lite
+    container_name: earnapp
+    restart: unless-stopped
+    environment:
+      - EARNAPP_UUID=${EARNAPP_UUID}
+    networks:
+      - pipassive
+    volumes:
+      - ./data/earnapp:/earnapp/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # PAWNS.APP - Monetizza connessione
+  # =============================================================================
+  pawns:
+    image: iproyal/pawns-cli:latest
+    container_name: pawns
+    restart: unless-stopped
+    command: -email=${PAWNS_EMAIL} -password=${PAWNS_PASSWORD} -device-name=${PAWNS_DEVICE_NAME:-PiPassive} -accept-tos
+    networks:
+      - pipassive
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # PACKETSTREAM - Condivisione banda per ricerche
+  # =============================================================================
+  packetstream:
+    image: packetstream/psclient:latest
+    container_name: packetstream
+    restart: unless-stopped
+    environment:
+      - CID=${PACKETSTREAM_CID}
+    networks:
+      - pipassive
+    volumes:
+      - ./data/packetstream:/root/.psclient
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # TRAFFMONETIZER - Condivisione traffico
+  # =============================================================================
+  traffmonetizer:
+    image: traffmonetizer/cli:latest
+    container_name: traffmonetizer
+    restart: unless-stopped
+    command: start accept --token ${TRAFFMONETIZER_TOKEN}
+    networks:
+      - pipassive
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # REPOCKET - Network sharing
+  # =============================================================================
+  repocket:
+    image: repocket/repocket:latest
+    container_name: repocket
+    restart: unless-stopped
+    environment:
+      - RP_EMAIL=${REPOCKET_EMAIL}
+      - RP_API_KEY=${REPOCKET_API_KEY}
+    networks:
+      - pipassive
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # EARNFM - Guadagna da banda inutilizzata
+  # =============================================================================
+  earnfm:
+    image: earnfm/earnfm-client:latest
+    container_name: earnfm
+    restart: unless-stopped
+    environment:
+      - EARNFM_TOKEN=${EARNFM_TOKEN}
+    networks:
+      - pipassive
+    volumes:
+      - ./data/earnfm:/app/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # MYSTNODE - Nodo VPN decentralizzato
+  # =============================================================================
+  mystnode:
+    image: mysteriumnetwork/myst:latest
+    container_name: mystnode
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    ports:
+      - "4449:4449"  # API/Dashboard
+    environment:
+      - MYSTNODE_API_KEY=${MYSTNODE_API_KEY}
+    networks:
+      - pipassive
+    volumes:
+      - ./data/mystnode:/var/lib/mysterium-node
+    command: service --agreed-terms-and-conditions
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # PACKETSHARE - Condivisione pacchetti
+  # =============================================================================
+  packetshare:
+    image: packetshare/packetshare:latest
+    container_name: packetshare
+    restart: unless-stopped
+    environment:
+      - PACKETSHARE_EMAIL=${PACKETSHARE_EMAIL}
+      - PACKETSHARE_PASSWORD=${PACKETSHARE_PASSWORD}
+    networks:
+      - pipassive
+    volumes:
+      - ./data/packetshare:/app/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # =============================================================================
+  # WATCHTOWER - Aggiornamento automatico containers (OPZIONALE)
+  # =============================================================================
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=86400  # 24 ore
+      - WATCHTOWER_INCLUDE_STOPPED=false
+      - WATCHTOWER_REVIVE_STOPPED=false
+    networks:
+      - pipassive
+    profiles:
+      - autoupdate
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+################################################################################
+# NETWORKS
+################################################################################
+networks:
+  pipassive:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+################################################################################
+# VOLUMES (se necessari per persistenza dati)
+################################################################################
+volumes:
+  earnapp_data:
+  packetstream_data:
+  earnfm_data:
+  mystnode_data:
+  packetshare_data:

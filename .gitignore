@@ -1,0 +1,42 @@
+# File e directory da ignorare
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dati dei container
+data/
+logs/
+backups/
+
+# File temporanei
+*.log
+*.tmp
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Docker
+docker-compose.override.yml
+
+# Credenziali e keys
+*.key
+*.pem
+*.crt
+secrets/
+
+# Backup files
+*.bak
+*.backup
+
+# Node modules (se usi script Node.js)
+node_modules/
