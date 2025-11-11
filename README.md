@@ -44,26 +44,50 @@ Lo script installerà automaticamente:
 
 ## ⚙️ Configurazione
 
-### 1. Configurazione API Keys
+Dopo l'installazione, puoi configurare i servizi in due modi:
 
-Dopo l'installazione, configura le tue API keys e credenziali:
+### Opzione 1️⃣: Configurazione Web (Consigliato)
+
+La modalità più facile e intuitiva:
+
+```bash
+# Avvia il web server
+./manage.sh start
+
+# Accedi al browser
+http://pipassive.local:8888/setup
+```
+
+Nel browser troverai un modulo completo per configurare:
+- Tutti i servizi (credenziali API, token, ID)
+- Timezone e impostazioni di sistema
+- Istruzioni dirette per ogni servizio con link di registrazione
+
+Il modulo salverà automaticamente le configurazioni nel file `.env`.
+
+**Per MystNode**: Dopo la configurazione, accedi a `http://pipassive.local:4449` per completare l'identità del nodo.
+
+### Opzione 2️⃣: Configurazione Terminale (CLI)
+
+Per chi preferisce il terminale:
 
 ```bash
 ./setup.sh
 ```
 
-Lo script ti guiderà passo-passo nella configurazione di ogni servizio.
+Lo script ti guiderà passo-passo nella configurazione interattiva di ogni servizio, con domande dirette e istruzioni.
 
-### 2. Configurazione Manuale (Opzionale)
+### Modalità Manuale (Avanzato)
 
-Puoi anche configurare manualmente copiando il file template:
+Se preferisci modificare direttamente:
 
 ```bash
+# Copia il template
 cp .env.example .env
+
+# Modifica con il tuo editor
 nano .env
 ```
-
-Inserisci le tue credenziali per ogni servizio nel file `.env`.
 
 ## 🎮 Gestione Servizi
 
@@ -89,13 +113,21 @@ Inserisci le tue credenziali per ogni servizio nel file `.env`.
 ./manage.sh update
 ```
 
-### Dashboard di Monitoraggio
+### Web Dashboard
 
-Visualizza lo stato in tempo reale di tutti i servizi:
+Accedi al dashboard web per monitorare i tuoi servizi in tempo reale:
 
-```bash
-./dashboard.sh
 ```
+http://pipassive.local:8888
+```
+
+Il dashboard include:
+- **Home**: Stato in tempo reale di tutti i servizi (Attivo/Inattivo)
+- **Setup**: Modulo web per configurare le credenziali
+- **Quick Links**: Accesso diretto ai dashboard ufficiali di ogni servizio
+- **Pulsanti Azioni**: Riavvia, Ferma, Visualizza Logs per ogni servizio
+
+Il web server si avvia automaticamente con `./manage.sh start` e rimane in esecuzione in background.
 
 ## 📊 Monitoraggio
 

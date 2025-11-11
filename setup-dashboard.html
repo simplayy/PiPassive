@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiPassive - Setup Configurazione</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header h1 .emoji {
+            color: #60a5fa;
+            font-size: 1.2em;
+        }
+
+        .header h1 .text {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #94a3b8;
+        }
+
+        .form-container {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .service-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .service-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .service-title h2 {
+            font-size: 1.4em;
+            color: #60a5fa;
+        }
+
+        .service-title .badge {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .service-description {
+            color: #94a3b8;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: #e2e8f0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+            background: #0f172a;
+        }
+
+        .form-group input::placeholder {
+            color: #475569;
+        }
+
+        .help-text {
+            color: #64748b;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(96, 165, 250, 0.3);
+        }
+
+        .btn-test {
+            background: transparent;
+            color: #60a5fa;
+            border: 2px solid #60a5fa;
+        }
+
+        .btn-test:hover {
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: #64748b;
+            border: 2px solid #475569;
+        }
+
+        .btn-back:hover {
+            background: rgba(75, 85, 99, 0.1);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            color: #86efac;
+            display: block;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #334155;
+            border-top: 3px solid #60a5fa;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .optional-badge {
+            background: #7c3aed;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            margin-left: 5px;
+        }
+
+        .link-info {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 3px solid #a78bfa;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .link-info a {
+            color: #a78bfa;
+            text-decoration: none;
+        }
+
+        .link-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column-reverse;
+            }
+
+            .btn-save, .btn-back, .btn-test {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="emoji">🍓</span><span class="text"> PiPassive Setup</span></h1>
+            <p>Configura tutti i tuoi servizi di passive income</p>
+        </div>
+
+        <div class="form-container">
+            <div id="alert" class="alert"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px;">Salvataggio configurazione...</p>
+            </div>
+
+            <form id="setupForm" style="display: block;">
+                <!-- HONEYGAIN -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>🍯 Honeygain</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Monetizza la tua connessione internet
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://join.honeygain.com/SIMNI7E3A1" target="_blank">Registrati su Honeygain con bonus $3</a> e usa le stesse credenziali qui
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="honeygain_email">Email</label>
+                            <input type="email" id="honeygain_email" name="HONEYGAIN_EMAIL" placeholder="your-email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="honeygain_password">Password</label>
+                            <input type="password" id="honeygain_password" name="HONEYGAIN_PASSWORD" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label for="honeygain_device">Nome Dispositivo</label>
+                            <input type="text" id="honeygain_device" name="HONEYGAIN_DEVICE_NAME" placeholder="PiPassive-Honeygain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EARNAPP -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>💰 EarnApp</h2>
+                        <span class="badge">Sistema</span>
+                    </div>
+                    <div class="service-description">
+                        Servizio installato direttamente sul Raspberry Pi
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://earnapp.com/i/KSj1BgEi" target="_blank">Registrati su EarnApp</a> - L'installazione avverrà automaticamente
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="earnapp_email">Email</label>
+                            <input type="email" id="earnapp_email" name="EARNAPP_EMAIL" placeholder="your-email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="earnapp_password">Password</label>
+                            <input type="password" id="earnapp_password" name="EARNAPP_PASSWORD" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAWNS -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>🐾 Pawns.app</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Condividi la tua bandwidth e guadagna
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://pawns.app/?r=4060689" target="_blank">Registrati su Pawns.app con bonus $3</a> - Usa le stesse credenziali
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="pawns_email">Email</label>
+                            <input type="email" id="pawns_email" name="PAWNS_EMAIL" placeholder="your-email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="pawns_password">Password</label>
+                            <input type="password" id="pawns_password" name="PAWNS_PASSWORD" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label for="pawns_device">Nome Dispositivo</label>
+                            <input type="text" id="pawns_device" name="PAWNS_DEVICE_NAME" placeholder="PiPassive-Pawns">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PACKETSTREAM -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>📡 Packetstream</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Fai partecipare il tuo dispositivo a ricerche di rete
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://packetstream.io/?psr=6GQZ" target="_blank">Registrati su Packetstream</a> - Trova il CID nel Dashboard
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="packetstream_cid">CID (Customer ID)</label>
+                            <input type="text" id="packetstream_cid" name="PACKETSTREAM_CID" placeholder="your-cid-here">
+                            <div class="help-text">Disponibile nel Dashboard > Download</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TRAFFMONETIZER -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>💻 TraffMonetizer</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Monetizza il traffico della tua connessione
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://traffmonetizer.com/?aff=1677252" target="_blank">Registrati su TraffMonetizer</a> - Copia il token dalle impostazioni
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="traffmonetizer_token">Application Token</label>
+                            <input type="text" id="traffmonetizer_token" name="TRAFFMONETIZER_TOKEN" placeholder="your-token-here">
+                            <div class="help-text">Disponibile in Dashboard > Your Application Token</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REPOCKET -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>💳 Repocket</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Guadagna dai tuoi dispositivi
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://link.repocket.com/mnGO" target="_blank">Registrati su Repocket</a> - Genera API key dal Dashboard
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="repocket_email">Email</label>
+                            <input type="email" id="repocket_email" name="REPOCKET_EMAIL" placeholder="your-email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="repocket_api">API Key</label>
+                            <input type="text" id="repocket_api" name="REPOCKET_API_KEY" placeholder="your-api-key-here">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EARNFM -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>🎵 Earn.fm</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Monetizza ascoltando musica
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://earn.fm/ref/SIMO7N4P" target="_blank">Registrati su Earn.fm</a> - Accedi e genera la Pair Key
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="earnfm_token">Pair Key / API Token</label>
+                            <input type="text" id="earnfm_token" name="EARNFM_TOKEN" placeholder="your-api-key-here">
+                            <div class="help-text">Disponibile su https://app.earn.fm/#/login</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MYSTNODE -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>🌐 Mystnode</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Nodo di rete decentralizzato - Richiede configurazione manuale
+                    </div>
+                    <div class="link-info">
+                        ⚠️ <strong>IMPORTANTE:</strong> Dopo il salvataggio, accedi a <a href="http://pipassive.local:4449" target="_blank">http://pipassive.local:4449</a> per completare la configurazione manuale
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="mystnode_api">API Key <span class="optional-badge">Opzionale</span></label>
+                            <input type="text" id="mystnode_api" name="MYSTNODE_API_KEY" placeholder="optional-api-key-for-monitoring">
+                            <div class="help-text">✓ L'identità si genera automaticamente al primo avvio</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; border-radius: 6px; padding: 15px; margin-top: 15px;">
+                        <strong style="color: #fbbf24;">📋 Procedura Setup Mystnodes:</strong>
+                        <ol style="margin-left: 20px; margin-top: 10px; color: #e2e8f0;">
+                            <li>Registrati su <a href="https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi" target="_blank" style="color: #60a5fa;">MystNodes con il referral</a></li>
+                            <li>Salva questa configurazione</li>
+                            <li>Clicca sul link: <a href="http://pipassive.local:4449" target="_blank" style="color: #60a5fa;">http://pipassive.local:4449</a></li>
+                            <li>Completa la procedura di verifica identità</li>
+                            <li>Copia l'Identity nel tuo account MystNodes</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- PACKETSHARE -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>📦 Packetshare</h2>
+                        <span class="badge">Docker</span>
+                    </div>
+                    <div class="service-description">
+                        Condividi la tua connessione e guadagna
+                    </div>
+                    <div class="link-info">
+                        📌 <a href="https://www.packetshare.io/?code=F5AF0C1F37B0D827" target="_blank">Registrati su Packetshare</a> - Usa le stesse credenziali
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="packetshare_email">Email</label>
+                            <input type="email" id="packetshare_email" name="PACKETSHARE_EMAIL" placeholder="your-email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="packetshare_password">Password</label>
+                            <input type="password" id="packetshare_password" name="PACKETSHARE_PASSWORD" placeholder="••••••••">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GENERAL CONFIG -->
+                <div class="service-section">
+                    <div class="service-title">
+                        <h2>⚙️ Configurazione Generale</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="timezone">Timezone</label>
+                            <input type="text" id="timezone" name="TZ" placeholder="Europe/Rome" value="Europe/Rome">
+                        </div>
+                        <div class="form-group">
+                            <label for="log_level">Log Level</label>
+                            <input type="text" id="log_level" name="LOG_LEVEL" placeholder="info" value="info">
+                        </div>
+                        <div class="form-group">
+                            <label for="auto_update">Auto Update <span class="optional-badge">true/false</span></label>
+                            <input type="text" id="auto_update" name="AUTO_UPDATE" placeholder="false" value="false">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-back" onclick="goBack()">← Indietro</button>
+                    <button type="button" class="btn-test" onclick="testConfig()">🧪 Test</button>
+                    <button type="submit" class="btn-save">💾 Salva Configurazione</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('setupForm');
+        const alertBox = document.getElementById('alert');
+        const loadingBox = document.getElementById('loading');
+
+        // Carica configurazione esistente
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+                
+                // Popola i campi del form
+                for (const [key, value] of Object.entries(config)) {
+                    const element = document.querySelector(`[name="${key}"]`);
+                    if (element) {
+                        element.value = value || '';
+                    }
+                }
+            } catch (error) {
+                console.error('Errore nel caricamento configurazione:', error);
+            }
+        }
+
+        // Salva configurazione
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const config = Object.fromEntries(formData);
+
+            loadingBox.style.display = 'block';
+            alertBox.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                loadingBox.style.display = 'none';
+
+                if (response.ok) {
+                    showAlert('✓ Configurazione salvata con successo! Ricordati di completare il setup di Mystnodes su http://pipassive.local:4449', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                } else {
+                    showAlert('✗ Errore nel salvataggio della configurazione', 'error');
+                }
+            } catch (error) {
+                loadingBox.style.display = 'none';
+                showAlert('✗ Errore di connessione: ' + error.message, 'error');
+            }
+        });
+
+        function showAlert(message, type) {
+            alertBox.textContent = message;
+            alertBox.className = `alert ${type}`;
+            alertBox.style.display = 'block';
+        }
+
+        function goBack() {
+            window.location.href = '/';
+        }
+
+        function testConfig() {
+            const formData = new FormData(form);
+            const config = Object.fromEntries(formData);
+            
+            loadingBox.style.display = 'block';
+            alertBox.style.display = 'none';
+
+            fetch('/api/test-config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingBox.style.display = 'none';
+                if (data.success) {
+                    showAlert('✓ ' + data.message, 'success');
+                } else {
+                    showAlert('✗ ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                loadingBox.style.display = 'none';
+                showAlert('✗ Errore nel test: ' + error.message, 'error');
+            });
+        }
+
+        // Carica configurazione al caricamento della pagina
+        loadConfig();
+    </script>
+</body>
+</html>
+
+

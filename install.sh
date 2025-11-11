@@ -103,7 +103,9 @@ install_dependencies() {
         git \
         jq \
         htop \
-        nano
+        nano \
+        avahi-daemon \
+        avahi-utils
     log_success "Dipendenze installate!"
 }
 
@@ -218,6 +220,28 @@ optimize_raspberry_pi() {
     log_success "Ottimizzazioni applicate!"
 }
 
+# Configura hostname e mDNS
+setup_hostname_mdns() {
+    log_info "Configurazione hostname e mDNS..."
+    
+    # Cambia hostname da 'raspberrypi' a 'pipassive'
+    CURRENT_HOSTNAME=$(hostname)
+    if [[ "$CURRENT_HOSTNAME" != "pipassive" ]]; then
+        log_info "Cambio hostname da '$CURRENT_HOSTNAME' a 'pipassive'..."
+        sudo hostnamectl set-hostname pipassive
+        log_success "Hostname impostato a 'pipassive'"
+    else
+        log_success "Hostname già impostato a 'pipassive'"
+    fi
+    
+    # Abilita e riavvia Avahi per registrare il nuovo hostname
+    sudo systemctl enable avahi-daemon 2>/dev/null || true
+    sudo systemctl restart avahi-daemon
+    sleep 2
+    
+    log_success "mDNS configurato per 'pipassive.local'"
+}
+
 # Test installazione Docker
 test_docker() {
     log_info "Test installazione Docker..."
@@ -254,29 +278,33 @@ print_summary() {
     echo -e "${GREEN}║           Installazione Completata con Successo!          ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════════════════════╝${NC}"
     echo
-    echo -e "${BLUE}Prossimi passi:${NC}"
+    echo -e "${BLUE}▶ PROSSIMI PASSI:${NC}"
     echo
-    echo -e "  1. ${YELLOW}Ricarica i permessi del gruppo docker:${NC}"
-    echo -e "     ${GREEN}newgrp docker${NC}"
+    echo -e "  ${YELLOW}Scegli come configurare i servizi:${NC}"
     echo
-    echo -e "  2. ${YELLOW}Configura le tue credenziali:${NC}"
-    echo -e "     ${GREEN}./setup.sh${NC}"
+    echo -e "  ${GREEN}OPZIONE 1 - Via Web (Consigliato):${NC}"
+    echo -e "    1. ${GREEN}./manage.sh start${NC}"
+    echo -e "    2. Apri browser: ${GREEN}http://pipassive.local:8888/setup${NC}"
+    echo -e "    3. Riempi il modulo e salva"
     echo
-    echo -e "  3. ${YELLOW}Avvia i servizi:${NC}"
-    echo -e "     ${GREEN}./manage.sh start${NC}"
+    echo -e "  ${GREEN}OPZIONE 2 - Via Terminale (CLI):${NC}"
+    echo -e "    1. ${GREEN}./setup.sh${NC}"
+    echo -e "    2. Rispondi alle domande interattive"
     echo
-    echo -e "  4. ${YELLOW}Monitora lo stato:${NC}"
-    echo -e "     ${GREEN}./dashboard.sh${NC}"
+    echo -e "  ${YELLOW}Dopo la configurazione:${NC}"
+    echo -e "    • Accedi al dashboard: ${GREEN}http://pipassive.local:8888${NC}"
+    echo -e "    • Quick Links: ${GREEN}http://pipassive.local:8888/links${NC}"
+    echo
+    echo -e "${YELLOW}⚠️  IMPORTANTE - MystNode:${NC}"
+    echo -e "    Completa la configurazione su: ${GREEN}http://pipassive.local:4449${NC}"
     echo
     echo -e "${BLUE}Documentazione:${NC}"
-    echo -e "  • README.md - Guida completa"
-    echo -e "  • docs/services.md - Come ottenere API keys"
-    echo -e "  • docs/troubleshooting.md - Risoluzione problemi"
+    echo -e "  • README.md - Leggi per dettagli"
+    echo -e "  • PROJECT_STRUCTURE.md - Struttura file"
     echo
-    echo -e "${YELLOW}Note importanti:${NC}"
-    echo -e "  • Il file .env contiene le tue credenziali (NON condividerlo!)"
-    echo -e "  • Esegui backup regolari: ./backup.sh"
-    echo -e "  • Monitora i logs: ./manage.sh logs <servizio>"
+    echo -e "${YELLOW}Sicurezza:${NC}"
+    echo -e "  • .env contiene credenziali (mai condividere)"
+    echo -e "  • Monitoraggio: ${GREEN}./manage.sh status${NC}"
     echo
 }
 
@@ -327,11 +355,15 @@ main() {
     optimize_raspberry_pi
     
     echo
-    log_info "=== FASE 8: Impostazione Permessi ==="
+    log_info "=== FASE 8: Configurazione Hostname e mDNS ==="
+    setup_hostname_mdns
+    
+    echo
+    log_info "=== FASE 9: Impostazione Permessi ==="
     make_scripts_executable
     
     echo
-    log_info "=== FASE 9: Test Installazione ==="
+    log_info "=== FASE 10: Test Installazione ==="
     test_docker
     
     echo

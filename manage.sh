@@ -5,8 +5,6 @@
 # Gestisce avvio, stop, restart e monitoring dei servizi
 ################################################################################
 
-set -e
-
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -20,17 +18,16 @@ NC='\033[0m'
 COMPOSE_FILE="docker-compose.yml"
 ENV_FILE=".env"
 
-# Lista servizi
+# Lista servizi Docker
 SERVICES=(
     "honeygain"
-    "earnapp"
     "pawns"
     "packetstream"
-    "traffmonetizer"
     "repocket"
     "earnfm"
     "mystnode"
     "packetshare"
+    "traffmonetizer"
 )
 
 # Funzioni di logging
@@ -88,14 +85,27 @@ EOF
 # Avvia tutti i servizi
 start_all() {
     log_info "Avvio di tutti i servizi..."
+    echo
     
     docker compose up -d
     
+    # Avvia il web server in background
+    log_info "Avvio del web server..."
+    if [[ -f "web-server.py" ]]; then
+        python3 web-server.py > /dev/null 2>&1 &
+        WEB_SERVER_PID=$!
+        echo $WEB_SERVER_PID > .web-server.pid
+        sleep 1
+        log_success "Web server avviato (PID: $WEB_SERVER_PID)"
+    fi
+    
     echo
-    log_success "Tutti i servizi sono stati avviati!"
+    log_success "Tutti i servizi Docker sono stati avviati!"
     echo
+    log_info "Dashboard web: http://pipassive.local:8888"
+    log_info "Configurazione: http://pipassive.local:8888/setup"
+    log_info ""
     log_info "Usa './manage.sh status' per verificare lo stato"
-    log_info "Usa './dashboard.sh' per il monitoraggio in tempo reale"
 }
 
 # Avvia un singolo servizio
@@ -116,6 +126,14 @@ start_service() {
 # Ferma tutti i servizi
 stop_all() {
     log_info "Arresto di tutti i servizi..."
+    
+    # Ferma il web server
+    if [[ -f ".web-server.pid" ]]; then
+        WEB_SERVER_PID=$(cat .web-server.pid)
+        kill $WEB_SERVER_PID 2>/dev/null || true
+        rm -f .web-server.pid
+        log_info "Web server fermato"
+    fi
     
     docker compose down
     
@@ -169,23 +187,39 @@ show_status() {
     echo -e "${CYAN}════════════════════════════════════════════════════════${NC}"
     echo
     
+    # Mostra container Docker
+    echo -e "${BLUE}Docker Containers:${NC}"
     docker compose ps
     
     echo
     echo -e "${CYAN}════════════════════════════════════════════════════════${NC}"
     echo
     
-    # Conta servizi attivi
-    local running=$(docker compose ps --services --filter "status=running" | wc -l)
+    # Conta servizi Docker attivi
+    local running=$(docker compose ps --services --filter "status=running" 2>/dev/null | wc -l)
     local total=${#SERVICES[@]}
     
     if [[ $running -eq $total ]]; then
-        log_success "Tutti i servizi sono attivi ($running/$total)"
+        log_success "Tutti i container Docker sono attivi ($running/$total)"
     elif [[ $running -gt 0 ]]; then
-        log_warning "Alcuni servizi sono attivi ($running/$total)"
+        log_warning "Alcuni container Docker sono attivi ($running/$total)"
     else
-        log_error "Nessun servizio attivo (0/$total)"
+        log_error "Nessun container Docker attivo (0/$total)"
     fi
+    
+    echo
+    echo -e "${BLUE}Servizi di Sistema (Opzionali - Non-Docker):${NC}"
+    echo
+    
+    # EarnApp
+    if systemctl is-active --quiet earnapp 2>/dev/null; then
+        echo -e "  ${GREEN}✓${NC} EarnApp ${GREEN}(running)${NC}"
+    else
+        echo -e "  ${YELLOW}○${NC} EarnApp (non installato)"
+        echo -e "     Installa: ${CYAN}wget -qO- https://brightdata.com/static/earnapp/install.sh > /tmp/earnapp.sh && sudo bash /tmp/earnapp.sh${NC}"
+    fi
+    
+    echo
 }
 
 # Mostra logs di un servizio
@@ -296,6 +330,10 @@ ${CYAN}Comandi:${NC}
     ${GREEN}list${NC}                   Lista servizi disponibili
     ${GREEN}help${NC}                   Mostra questo messaggio
 
+${CYAN}Servizi opzionali (non-Docker):${NC}
+    ${YELLOW}EarnApp${NC}       - Installa manualmente: sudo bash <(wget -qO- https://brightdata.com/static/earnapp/install.sh)
+    ${YELLOW}TraffMonetizer${NC} - Installa manualmente: curl -fsSL https://traffmonetizer.com/install.sh | sudo bash
+
 ${CYAN}Esempi:${NC}
     ./manage.sh start              # Avvia tutti i servizi
     ./manage.sh start honeygain    # Avvia solo Honeygain
@@ -305,7 +343,7 @@ ${CYAN}Esempi:${NC}
     ./manage.sh restart            # Riavvia tutti i servizi
     ./manage.sh update             # Aggiorna tutti i container
 
-${CYAN}Servizi disponibili:${NC}
+${CYAN}Servizi Docker disponibili:${NC}
 EOF
     
     for service in "${SERVICES[@]}"; do

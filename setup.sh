@@ -5,8 +5,6 @@
 # Guida l'utente nella configurazione di tutti i servizi
 ################################################################################
 
-set -e
-
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -86,12 +84,27 @@ get_existing_value() {
     fi
 }
 
+# Funzione per testare una connessione
+test_connectivity() {
+    local service_name=$1
+    local test_url=$2
+    
+    if timeout 5 curl -sf "$test_url" >/dev/null 2>&1; then
+        log_success "$service_name è raggiungibile!"
+        return 0
+    else
+        log_warning "$service_name non raggiungibile (potrebbe essere normale)"
+        return 1
+    fi
+}
+
 # Chiedi input con valore di default
 ask_input() {
     local prompt=$1
     local var_name=$2
     local default_value=$3
     local is_password=$4
+    local value=""
     local existing_value=$(get_existing_value "$var_name")
     
     # Se esiste un valore, usalo come default
@@ -99,21 +112,26 @@ ask_input() {
         default_value="$existing_value"
     fi
     
+    # Stampa il prompt con i colori (non catturato in ask_input)
     if [[ "$is_password" == "true" ]]; then
-        echo -ne "${CYAN}${prompt}${NC}"
-        if [[ -n "$default_value" ]]; then
-            echo -ne " ${YELLOW}[attuale: ****]${NC}"
-        fi
-        echo -ne ": "
-        read -s value
-        echo
+        {
+            echo -ne "${CYAN}${prompt}${NC}"
+            if [[ -n "$default_value" ]]; then
+                echo -ne " ${YELLOW}[attuale: ****]${NC}"
+            fi
+            echo -ne ": "
+        } >&2
+        read -rs value
+        echo "" >&2
     else
-        echo -ne "${CYAN}${prompt}${NC}"
-        if [[ -n "$default_value" ]]; then
-            echo -ne " ${YELLOW}[${default_value}]${NC}"
-        fi
-        echo -ne ": "
-        read value
+        {
+            echo -ne "${CYAN}${prompt}${NC}"
+            if [[ -n "$default_value" ]]; then
+                echo -ne " ${YELLOW}[${default_value}]${NC}"
+            fi
+            echo -ne ": "
+        } >&2
+        read -r value
     fi
     
     # Usa default se vuoto
@@ -121,6 +139,7 @@ ask_input() {
         value="$default_value"
     fi
     
+    # Stampa solo il valore (senza colori)
     echo "$value"
 }
 
@@ -128,6 +147,7 @@ ask_input() {
 configure_service() {
     local service_name=$1
     local service_url=$2
+    local response
     
     echo
     echo -e "${MAGENTA}═══════════════════════════════════════════════════════${NC}"
@@ -136,21 +156,30 @@ configure_service() {
     echo -e "${MAGENTA}═══════════════════════════════════════════════════════${NC}"
     echo
     
-    read -p "Vuoi configurare ${service_name}? (y/n) " -n 1 -r
+    read -p "Vuoi configurare ${service_name}? (y/n) " -n 1 -r response
     echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if [[ ! $response =~ ^[Yy]$ ]]; then
         log_info "Saltato ${service_name}"
-        return
+        return 1
     fi
+    return 0
 }
 
 # Setup Honeygain
 setup_honeygain() {
-    configure_service "Honeygain" "https://honeygain.com/"
+    configure_service "Honeygain" "https://join.honeygain.com/SIMNI7E3A1" || return 0
+    
+    echo -e "${YELLOW}Per registrarti e ottenere bonus:${NC}"
+    echo -e "  ${GREEN}https://join.honeygain.com/SIMNI7E3A1${NC}"
+    echo
     
     HONEYGAIN_EMAIL=$(ask_input "Email Honeygain" "HONEYGAIN_EMAIL" "" false)
     HONEYGAIN_PASSWORD=$(ask_input "Password Honeygain" "HONEYGAIN_PASSWORD" "" true)
     HONEYGAIN_DEVICE_NAME=$(ask_input "Nome dispositivo" "HONEYGAIN_DEVICE_NAME" "PiPassive-Honeygain" false)
+    
+    # Test connessione a Honeygain
+    log_info "Test connessione a Honeygain..."
+    test_connectivity "Honeygain" "https://api.honeygain.com" || true
     
     cat >> "$ENV_FILE" << EOF
 
@@ -160,37 +189,52 @@ HONEYGAIN_PASSWORD=$HONEYGAIN_PASSWORD
 HONEYGAIN_DEVICE_NAME=$HONEYGAIN_DEVICE_NAME
 EOF
     
-    log_success "Honeygain configurato!"
+    log_success "Honeygain configurato e testato!"
 }
 
 # Setup EarnApp
 setup_earnapp() {
-    configure_service "EarnApp" "https://earnapp.com/"
+    configure_service "EarnApp" "https://earnapp.com/i/KSj1BgEi" || return 0
     
-    echo -e "${YELLOW}Per ottenere il tuo UUID:${NC}"
-    echo "1. Vai su https://earnapp.com/dashboard"
-    echo "2. Clicca su 'Installation'"
-    echo "3. Copia il Device UUID (formato: sdk-node-xxxxx)"
+    echo
+    log_info "EarnApp verrà installato come servizio nativo (non Docker)"
+    echo -e "${YELLOW}Per registrarti:${NC}"
+    echo -e "  ${GREEN}https://earnapp.com/i/KSj1BgEi${NC}"
     echo
     
-    EARNAPP_UUID=$(ask_input "UUID EarnApp" "EARNAPP_UUID" "" false)
+    EARNAPP_EMAIL=$(ask_input "Email EarnApp" "EARNAPP_EMAIL" "" false)
+    EARNAPP_PASSWORD=$(ask_input "Password EarnApp" "EARNAPP_PASSWORD" "" true)
+    
+    # Test connessione
+    log_info "Test connessione a EarnApp..."
+    test_connectivity "EarnApp" "https://earnapp.com" || true
     
     cat >> "$ENV_FILE" << EOF
 
-# EarnApp
-EARNAPP_UUID=$EARNAPP_UUID
+# EarnApp - Servizio nativo (non Docker)
+EARNAPP_EMAIL=$EARNAPP_EMAIL
+EARNAPP_PASSWORD=$EARNAPP_PASSWORD
 EOF
     
     log_success "EarnApp configurato!"
+    log_info "Per installare: wget -qO- https://brightdata.com/static/earnapp/install.sh > /tmp/earnapp.sh && sudo bash /tmp/earnapp.sh"
 }
 
 # Setup Pawns
 setup_pawns() {
-    configure_service "Pawns.app" "https://pawns.app/"
+    configure_service "Pawns.app" "https://pawns.app/?r=4060689" || return 0
+    
+    echo -e "${YELLOW}Per registrarti e ottenere bonus:${NC}"
+    echo -e "  ${GREEN}https://pawns.app/?r=4060689${NC}"
+    echo
     
     PAWNS_EMAIL=$(ask_input "Email Pawns" "PAWNS_EMAIL" "" false)
     PAWNS_PASSWORD=$(ask_input "Password Pawns" "PAWNS_PASSWORD" "" true)
     PAWNS_DEVICE_NAME=$(ask_input "Nome dispositivo" "PAWNS_DEVICE_NAME" "PiPassive-Pawns" false)
+    
+    # Test connessione a Pawns
+    log_info "Test connessione a Pawns.app..."
+    test_connectivity "Pawns.app" "https://pawns.app" || true
     
     cat >> "$ENV_FILE" << EOF
 
@@ -200,14 +244,16 @@ PAWNS_PASSWORD=$PAWNS_PASSWORD
 PAWNS_DEVICE_NAME=$PAWNS_DEVICE_NAME
 EOF
     
-    log_success "Pawns.app configurato!"
+    log_success "Pawns.app configurato e testato!"
 }
 
 # Setup PacketStream
 setup_packetstream() {
-    configure_service "PacketStream" "https://packetstream.io/"
+    configure_service "PacketStream" "https://packetstream.io/?psr=6GQZ" || return 0
     
-    echo -e "${YELLOW}Per ottenere il tuo CID:${NC}"
+    echo -e "${YELLOW}Per registrarti e ottenere il CID:${NC}"
+    echo -e "  ${GREEN}https://packetstream.io/?psr=6GQZ${NC}"
+    echo
     echo "1. Vai su https://packetstream.io/dashboard"
     echo "2. Clicca su 'Download' o 'Add Device'"
     echo "3. Copia il CID dalle istruzioni di installazione"
@@ -215,41 +261,53 @@ setup_packetstream() {
     
     PACKETSTREAM_CID=$(ask_input "CID PacketStream" "PACKETSTREAM_CID" "" false)
     
+    # Test connessione a PacketStream
+    log_info "Test connessione a PacketStream..."
+    test_connectivity "PacketStream" "https://packetstream.io" || true
+    
     cat >> "$ENV_FILE" << EOF
 
 # PacketStream
 PACKETSTREAM_CID=$PACKETSTREAM_CID
 EOF
     
-    log_success "PacketStream configurato!"
+    log_success "PacketStream configurato e testato!"
 }
 
 # Setup TraffMonetizer
 setup_traffmonetizer() {
-    configure_service "TraffMonetizer" "https://traffmonetizer.com/"
+    configure_service "TraffMonetizer" "https://traffmonetizer.com/?aff=1677252" || return 0
     
-    echo -e "${YELLOW}Per ottenere il token:${NC}"
+    echo -e "${YELLOW}Per registrarti e ottenere il token:${NC}"
+    echo -e "  ${GREEN}https://traffmonetizer.com/?aff=1677252${NC}"
+    echo
     echo "1. Vai su https://traffmonetizer.com/dashboard"
-    echo "2. Cerca 'Your Application Token'"
+    echo "2. Cerca 'Your Application Token' o 'API Token'"
     echo "3. Copia il token"
     echo
     
     TRAFFMONETIZER_TOKEN=$(ask_input "Token TraffMonetizer" "TRAFFMONETIZER_TOKEN" "" false)
     
+    # Test connessione a TraffMonetizer
+    log_info "Test connessione a TraffMonetizer..."
+    test_connectivity "TraffMonetizer" "https://traffmonetizer.com" || true
+    
     cat >> "$ENV_FILE" << EOF
 
-# TraffMonetizer
+# TraffMonetizer - Container Docker (immagine ARM64)
 TRAFFMONETIZER_TOKEN=$TRAFFMONETIZER_TOKEN
 EOF
     
-    log_success "TraffMonetizer configurato!"
+    log_success "TraffMonetizer configurato! (Docker container ARM64)"
 }
 
 # Setup Repocket
 setup_repocket() {
-    configure_service "Repocket" "https://repocket.co/"
+    configure_service "Repocket" "https://link.repocket.com/mnGO" || return 0
     
-    echo -e "${YELLOW}Per ottenere l'API key:${NC}"
+    echo -e "${YELLOW}Per registrarti e ottenere l'API key:${NC}"
+    echo -e "  ${GREEN}https://link.repocket.com/mnGO${NC}"
+    echo
     echo "1. Vai su https://repocket.co/dashboard"
     echo "2. Cerca la sezione API"
     echo "3. Genera una nuova API key"
@@ -258,6 +316,10 @@ setup_repocket() {
     REPOCKET_EMAIL=$(ask_input "Email Repocket" "REPOCKET_EMAIL" "" false)
     REPOCKET_API_KEY=$(ask_input "API Key Repocket" "REPOCKET_API_KEY" "" false)
     
+    # Test connessione a Repocket
+    log_info "Test connessione a Repocket..."
+    test_connectivity "Repocket" "https://repocket.co" || true
+    
     cat >> "$ENV_FILE" << EOF
 
 # Repocket
@@ -265,20 +327,27 @@ REPOCKET_EMAIL=$REPOCKET_EMAIL
 REPOCKET_API_KEY=$REPOCKET_API_KEY
 EOF
     
-    log_success "Repocket configurato!"
+    log_success "Repocket configurato e testato!"
 }
 
 # Setup EarnFM
 setup_earnfm() {
-    configure_service "EarnFM" "https://earn.fm/"
+    configure_service "EarnFM" "https://earn.fm/ref/SIMO7N4P" || return 0
     
-    echo -e "${YELLOW}Per ottenere il token:${NC}"
-    echo "1. Vai su https://earn.fm/dashboard"
-    echo "2. Cerca il token di installazione"
-    echo "3. Copia il token"
+    echo -e "${YELLOW}Per registrarti e ottenere la API key:${NC}"
+    echo -e "  ${GREEN}https://earn.fm/ref/SIMO7N4P${NC}"
+    echo
+    echo "1. Vai su https://app.earn.fm/#/login"
+    echo "2. Fai login al tuo account"
+    echo "3. Cerca la 'API key' (o 'Pair Key')"
+    echo "4. Copia la tua API key"
     echo
     
-    EARNFM_TOKEN=$(ask_input "Token EarnFM" "EARNFM_TOKEN" "" false)
+    EARNFM_TOKEN=$(ask_input "API Key EarnFM" "EARNFM_TOKEN" "" false)
+    
+    # Test connessione a EarnFM
+    log_info "Test connessione a EarnFM..."
+    test_connectivity "EarnFM" "https://earn.fm" || true
     
     cat >> "$ENV_FILE" << EOF
 
@@ -286,36 +355,55 @@ setup_earnfm() {
 EARNFM_TOKEN=$EARNFM_TOKEN
 EOF
     
-    log_success "EarnFM configurato!"
+    log_success "EarnFM configurato e testato!"
 }
 
 # Setup MystNode
 setup_mystnode() {
-    configure_service "MystNode" "https://mystnodes.com/"
+    configure_service "MystNode" "https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi" || return 0
     
-    echo -e "${YELLOW}Info MystNode:${NC}"
+    echo -e "${YELLOW}📌 Istruzioni MystNode:${NC}"
+    echo -e "Per registrarti: ${GREEN}https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi${NC}"
+    echo
     echo "- Il nodo genererà automaticamente un'identità al primo avvio"
-    echo "- Dashboard disponibile su: http://[IP-RASPBERRY]:4449"
+    echo "- Dopo l'avvio del Docker, DEVI completare la configurazione manuale:"
+    echo "  ${CYAN}1. Vai su: http://pipassive.local:4449${NC} (o http://[IP-RASPBERRY]:4449)"
+    echo "  ${CYAN}2. Segui la procedura di setup della dashboard${NC}"
+    echo "  ${CYAN}3. Completa la verifica dell'identità${NC}"
     echo "- L'API key è opzionale per il monitoraggio remoto"
     echo
     
     MYSTNODE_API_KEY=$(ask_input "API Key MystNode (opzionale)" "MYSTNODE_API_KEY" "" false)
     
+    # Test connessione a MystNode
+    log_info "Test connessione a MystNode..."
+    test_connectivity "MystNode" "https://mystnodes.com" || true
+    
     cat >> "$ENV_FILE" << EOF
 
-# MystNode
+# MystNode - RICHIEDE SETUP MANUALE VIA WEB!
+# Dopo l'avvio, visita: http://pipassive.local:4449
 MYSTNODE_API_KEY=$MYSTNODE_API_KEY
 EOF
     
     log_success "MystNode configurato!"
+    echo -e "${YELLOW}⚠️  Ricorda: devi completare il setup su http://pipassive.local:4449${NC}"
 }
 
 # Setup PacketShare
 setup_packetshare() {
-    configure_service "PacketShare" "https://packetshare.io/"
+    configure_service "PacketShare" "https://www.packetshare.io/?code=F5AF0C1F37B0D827" || return 0
+    
+    echo -e "${YELLOW}Per registrarti:${NC}"
+    echo -e "  ${GREEN}https://www.packetshare.io/?code=F5AF0C1F37B0D827${NC}"
+    echo
     
     PACKETSHARE_EMAIL=$(ask_input "Email PacketShare" "PACKETSHARE_EMAIL" "" false)
     PACKETSHARE_PASSWORD=$(ask_input "Password PacketShare" "PACKETSHARE_PASSWORD" "" true)
+    
+    # Test connessione a PacketShare
+    log_info "Test connessione a PacketShare..."
+    test_connectivity "PacketShare" "https://packetshare.io" || true
     
     cat >> "$ENV_FILE" << EOF
 
@@ -324,7 +412,93 @@ PACKETSHARE_EMAIL=$PACKETSHARE_EMAIL
 PACKETSHARE_PASSWORD=$PACKETSHARE_PASSWORD
 EOF
     
-    log_success "PacketShare configurato!"
+    log_success "PacketShare configurato e testato!"
+}
+
+# Installa EarnApp come servizio nativo (interattivo)
+install_earnapp_interactive() {
+    echo
+    echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${GREEN}EarnApp - Servizio di Sistema (Opzionale)${NC}"
+    echo
+    
+    read -p "Vuoi installare EarnApp ORA? (s/n) " -r
+    
+    if [[ ! "$REPLY" =~ ^[Ss]$ ]]; then
+        return 0
+    fi
+    
+    echo
+    echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
+    
+    # Esegui il comando di installazione direttamente (foreground, interattivo)
+    wget -qO- https://brightdata.com/static/earnapp/install.sh > /tmp/earnapp.sh && sudo bash /tmp/earnapp.sh
+    
+    echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
+    echo
+    
+    # Verifica se è stato installato
+    if command -v earnapp >/dev/null 2>&1; then
+        log_success "✓ EarnApp installato con successo!"
+        sudo systemctl enable earnapp 2>/dev/null || true
+        sudo systemctl start earnapp 2>/dev/null || true
+    else
+        log_warning "EarnApp: verifica con: systemctl status earnapp"
+    fi
+}
+
+# Installa TraffMonetizer come servizio nativo (interattivo)
+install_traffmonetizer_interactive() {
+    echo
+    echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${GREEN}TraffMonetizer - Servizio di Sistema (Opzionale)${NC}"
+    echo
+    
+    read -p "Vuoi installare TraffMonetizer ORA? (s/n) " -r
+    
+    if [[ ! "$REPLY" =~ ^[Ss]$ ]]; then
+        log_info "TraffMonetizer non configurato. Puoi installarlo in seguito con:"
+        echo
+        echo -e "  ${CYAN}curl -fsSL https://traffmonetizer.com/install.sh | sudo bash${NC}"
+        echo
+        return 0
+    fi
+    
+    echo
+    log_info "Avvio installer di TraffMonetizer..."
+    echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
+    echo "L'installer verrà eseguito in background."
+    echo -e "${CYAN}────────────────────────────────────────────────────────${NC}"
+    echo
+    
+    # Esegui l'installer in background
+    sudo bash <(curl -fsSL https://traffmonetizer.com/install.sh 2>/dev/null) >/dev/null 2>&1 &
+    
+    local pid=$!
+    local count=0
+    
+    # Attendi massimo 120 secondi
+    while [[ $count -lt 120 ]] && kill -0 $pid 2>/dev/null; do
+        sleep 1
+        ((count++))
+        if [[ $((count % 10)) -eq 0 ]]; then
+            echo -ne "\r[...] Installazione in corso ($count s)"
+        fi
+    done
+    
+    echo
+    echo
+    
+    # Verifica se è stato installato
+    sleep 2
+    if command -v tm >/dev/null 2>&1; then
+        log_success "✓ TraffMonetizer installato con successo!"
+        sudo systemctl enable traffmonetizer 2>/dev/null || true
+        sudo systemctl start traffmonetizer 2>/dev/null || true
+    else
+        log_warning "TraffMonetizer: installazione in background"
+        log_info "Verifica con: systemctl status traffmonetizer"
+    fi
 }
 
 # Setup generale
@@ -385,6 +559,15 @@ main() {
     setup_packetshare
     setup_general
     
+    # Installazione interattiva servizi di sistema
+    echo
+    echo -e "${MAGENTA}═══════════════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}Installazione Servizi di Sistema (Opzionale)${NC}"
+    echo -e "${MAGENTA}═══════════════════════════════════════════════════════${NC}"
+    echo
+    
+    install_earnapp_interactive
+    
     # Riepilogo
     echo
     echo -e "${GREEN}╔════════════════════════════════════════════════════════╗${NC}"
@@ -394,11 +577,24 @@ main() {
     log_success "File .env creato con successo!"
     echo
     echo -e "${BLUE}Prossimi passi:${NC}"
-    echo -e "  1. Verifica il file .env: ${CYAN}nano .env${NC}"
-    echo -e "  2. Avvia i servizi: ${GREEN}./manage.sh start${NC}"
-    echo -e "  3. Monitora lo stato: ${GREEN}./dashboard.sh${NC}"
+    echo -e "  1. Avvia i servizi: ${GREEN}./manage.sh start${NC}"
+    echo -e "  2. Accedi a: ${CYAN}http://pipassive.local:8888${NC}"
+    echo -e "  3. Configura da web: ${CYAN}http://pipassive.local:8888/setup${NC}"
     echo
-    log_warning "IMPORTANTE: Non condividere mai il file .env!"
+    echo -e "${CYAN}Servizi disponibili:${NC}"
+    echo -e "  • 8 servizi Docker (Honeygain, Pawns, PacketStream, Repocket, EarnFM, MystNode, PacketShare, TraffMonetizer)"
+    if command -v earnapp >/dev/null 2>&1; then
+        echo -e "  • ${GREEN}✓${NC} EarnApp (servizio di sistema - installato)"
+    else
+        echo -e "  • ○ EarnApp (opzionale - non installato)"
+    fi
+    echo
+    echo -e "${YELLOW}⚠️  IMPORTANTE - LEGGI:${NC}"
+    echo -e "  🔴 ${RED}MystNode richiede configurazione manuale!${NC}"
+    echo -e "     Dopo 'manage.sh start', vai su: ${CYAN}http://pipassive.local:4449${NC}"
+    echo -e "     e completa la procedura di setup sulla dashboard."
+    echo
+    log_warning "Non condividere mai il file .env!"
     echo
 }
 

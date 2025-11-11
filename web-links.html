@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiPassive - Quick Links</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #94a3b8;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .link-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            border-color: #60a5fa;
+            box-shadow: 0 10px 30px rgba(96, 165, 250, 0.2);
+            background: #334155;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card-logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .card-description {
+            font-size: 0.9em;
+            color: #94a3b8;
+        }
+
+        .card-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(96, 165, 250, 0.1);
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .link-btn:hover {
+            background: rgba(96, 165, 250, 0.2);
+            transform: translateX(4px);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .status-manual {
+            background: #fef3c7;
+            color: #78350f;
+        }
+
+        .status-auto {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid #475569;
+            border-radius: 6px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .back-link a:hover {
+            border-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Quick Links</h1>
+            <p>Accedi velocemente alle dashboard e configurazioni dei tuoi servizi</p>
+        </div>
+
+        <div class="links-grid">
+            <!-- LOCAL DASHBOARDS -->
+            <a href="http://pipassive.local:8888" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">🍓</div>
+                    <div>
+                        <div class="card-title">Dashboard PiPassive</div>
+                        <div class="card-description">Gestione servizi</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    🔗 http://pipassive.local:8888
+                </div>
+            </a>
+
+            <a href="http://pipassive.local:4449" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi5g0XD-WD6x-sYew0BBKgwMtZhaw5tk-vxA&s" alt="Mystnode">
+                    </div>
+                    <div>
+                        <div class="card-title">Mystnode Dashboard</div>
+                        <div class="card-description">Configurazione locale</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    🔗 http://pipassive.local:4449
+                </div>
+                <span class="status-badge status-manual">⚠️ SETUP MANUALE</span>
+            </a>
+
+            <!-- HONEYGAIN -->
+            <a href="https://dashboard.honeygain.com/" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://www.honeygain.com/assets/favicon/hg_favicon-256.ico" alt="Honeygain">
+                    </div>
+                    <div>
+                        <div class="card-title">Honeygain</div>
+                        <div class="card-description">Monitora guadagni</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    📊 Dashboard Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- PAWNS -->
+            <a href="https://dashboard.pawns.app/home" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://play-lh.googleusercontent.com/D5Vh-dgHqYG-tmyk9dnoHAEQCX6Xt11w1pPzEVPXo0f_aVZX6HA7btrdBDtPgrfzgrQ" alt="Pawns">
+                    </div>
+                    <div>
+                        <div class="card-title">Pawns.app</div>
+                        <div class="card-description">Condivisione bandwidth</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    📊 Dashboard Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- PACKETSTREAM -->
+            <a href="https://app.packetstream.io/dashboard/" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://avatars.githubusercontent.com/u/48444771?s=200&v=4" alt="PacketStream">
+                    </div>
+                    <div>
+                        <div class="card-title">PacketStream</div>
+                        <div class="card-description">Ricerche di rete</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    📊 Dashboard Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- REPOCKET -->
+            <a href="https://repocket.com/dashboard/share-internet" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://play-lh.googleusercontent.com/Heg6vHC4nAkUan6S0p0IILEB9RV4olrRGYYg9HzGldpcqUR83kE9t8nLzNzF0uTVWeQ" alt="Repocket">
+                    </div>
+                    <div>
+                        <div class="card-title">Repocket</div>
+                        <div class="card-description">Guadagna da dispositivi</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    📊 Dashboard Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- EARNFM -->
+            <a href="https://app.earn.fm/" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://play-lh.googleusercontent.com/TDsFQdsvYKEtS-vwCCUo6A-VFwyuem5NDCVoyJUx8YRCzpxGYuM9UH8z_dBU1n96NioL" alt="EarnFM">
+                    </div>
+                    <div>
+                        <div class="card-title">Earn.fm</div>
+                        <div class="card-description">Monetizza musica</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    🎵 App Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- PACKETSHARE -->
+            <a href="https://www.packetshare.io/dashboard/" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://play-lh.googleusercontent.com/F_4sKaIS_I4GPpTOLpmNADAdYOLjc8ofGMze9wI0rpIK4hQ1WBLguEhuCA2MqxUYyf27" alt="PacketShare">
+                    </div>
+                    <div>
+                        <div class="card-title">PacketShare</div>
+                        <div class="card-description">Condividi rete</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    📊 Dashboard Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- TRAFFMONETIZER -->
+            <a href="https://app.traffmonetizer.com/dashboard" target="_blank" class="link-card">
+                <div class="card-header">
+                    <div class="card-logo">
+                        <img src="https://play-lh.googleusercontent.com/D5Vh-dgHqYG-tmyk9dnoHAEQCX6Xt11w1pPzEVPXo0f_aVZX6HA7btrdBDtPgrfzgrQ" alt="TraffMonetizer">
+                    </div>
+                    <div>
+                        <div class="card-title">TraffMonetizer</div>
+                        <div class="card-description">Monetizza traffico</div>
+                    </div>
+                </div>
+                <div class="link-btn" onclick="event.stopPropagation()">
+                    📊 Dashboard Online
+                </div>
+                <span class="status-badge status-auto">✓ Auto-Configurato</span>
+            </a>
+
+            <!-- EARNAPP -->
+            <div class="link-card" style="opacity: 0.7;">
+                <div class="card-header">
+                    <div class="card-logo">💰</div>
+                    <div>
+                        <div class="card-title">EarnApp</div>
+                        <div class="card-description">Servizio di sistema</div>
+                    </div>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.9em;">
+                    EarnApp non ha una dashboard web locale.
+                </div>
+                <span class="status-badge" style="background: #dbeafe; color: #1e40af;">ℹ️ Sistema Locale</span>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="http://pipassive.local:8888">← Torna alla Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
+
+

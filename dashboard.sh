@@ -5,8 +5,6 @@
 # Visualizza in tempo reale lo stato di tutti i servizi
 ################################################################################
 
-set -e
-
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -21,17 +19,16 @@ BOLD='\033[1m'
 # Refresh rate in secondi
 REFRESH_RATE=5
 
-# Lista servizi
+# Lista servizi Docker
 SERVICES=(
     "honeygain:Honeygain"
-    "earnapp:EarnApp"
     "pawns:Pawns.app"
     "packetstream:PacketStream"
-    "traffmonetizer:TraffMonetizer"
     "repocket:Repocket"
     "earnfm:EarnFM"
     "mystnode:MystNode"
     "packetshare:PacketShare"
+    "traffmonetizer:TraffMonetizer"
 )
 
 # Funzione per ottenere lo stato di un container
