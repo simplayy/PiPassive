@@ -1,18 +1,18 @@
-# 📱 Guida per Ottenere le API Keys e Credenziali
+# 📱 Guide to Obtain API Keys and Credentials
 
-Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per ogni servizio di passive income.
+This guide will help you register and obtain the necessary credentials for each passive income service.
 
 ---
 
 ## 🍯 Honeygain
 
-**Cosa fa:** Condivide la tua connessione internet inutilizzata per ricerche di mercato.
+**What it does:** Shares your unused internet connection for market research.
 
-**Registrazione:**
-1. Vai su: https://join.honeygain.com/SIMNI7E3A1 (con bonus $3)
-2. Clicca su "Sign Up" o usa il referral link
-3. Registrati con email e password
-4. Verifica la tua email
+**Registration:**
+1. Go to: https://join.honeygain.com/SIMNI7E3A1 (with $3 bonus)
+2. Click "Sign Up" or use the referral link
+3. Register with email and password
+4. Verify your email
 
 **Credenziali necessarie:**
 - Email di registrazione

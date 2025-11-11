@@ -1,20 +1,20 @@
 #!/bin/bash
 
 ################################################################################
-# PiPassive - Script di Installazione Automatica
-# Installa Docker, Docker Compose e prepara l'ambiente per i servizi di passive income
+# PiPassive - Automatic Installation Script
+# Installs Docker, Docker Compose and prepares the environment for passive income services
 ################################################################################
 
 set -e  # Exit on error
 
-# Colors per output
+# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Logo ASCII
+# ASCII Logo
 print_logo() {
     echo -e "${BLUE}"
     cat << "EOF"
@@ -29,7 +29,7 @@ EOF
     echo -e "${NC}"
 }
 
-# Funzioni di logging
+# Logging functions
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -46,36 +46,36 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Controlla se è root
+# Check if running as root
 check_root() {
     if [[ $EUID -eq 0 ]]; then
-        log_error "Non eseguire questo script come root o con sudo!"
-        log_info "Lo script richiederà i permessi sudo quando necessario."
+        log_error "Do not run this script as root or with sudo!"
+        log_info "The script will request sudo permissions when necessary."
         exit 1
     fi
 }
 
-# Controlla sistema operativo
+# Check operating system
 check_system() {
-    log_info "Controllo sistema operativo..."
-    
+    log_info "Checking operating system..."
+
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
         OS=$ID
         VER=$VERSION_ID
-        log_success "Sistema rilevato: $PRETTY_NAME"
+        log_success "System detected: $PRETTY_NAME"
     else
-        log_error "Sistema operativo non supportato!"
+        log_error "Unsupported operating system!"
         exit 1
     fi
-    
-    # Controlla architettura
+
+    # Check architecture
     ARCH=$(uname -m)
-    log_info "Architettura: $ARCH"
-    
+    log_info "Architecture: $ARCH"
+
     if [[ "$ARCH" != "armv7l" && "$ARCH" != "aarch64" && "$ARCH" != "x86_64" ]]; then
-        log_warning "Architettura non testata: $ARCH"
-        read -p "Vuoi continuare comunque? (y/n) " -n 1 -r
+        log_warning "Untested architecture: $ARCH"
+        read -p "Do you want to continue anyway? (y/n) " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             exit 1
@@ -83,17 +83,17 @@ check_system() {
     fi
 }
 
-# Aggiorna sistema
+# Update system
 update_system() {
-    log_info "Aggiornamento sistema..."
+    log_info "Updating system..."
     sudo apt-get update -qq
     sudo apt-get upgrade -y -qq
-    log_success "Sistema aggiornato!"
+    log_success "System updated!"
 }
 
-# Installa dipendenze
+# Install dependencies
 install_dependencies() {
-    log_info "Installazione dipendenze..."
+    log_info "Installing dependencies..."
     sudo apt-get install -y -qq \
         apt-transport-https \
         ca-certificates \
@@ -106,52 +106,52 @@ install_dependencies() {
         nano \
         avahi-daemon \
         avahi-utils
-    log_success "Dipendenze installate!"
+    log_success "Dependencies installed!"
 }
 
-# Installa Docker
+# Install Docker
 install_docker() {
     if command -v docker &> /dev/null; then
-        log_success "Docker già installato ($(docker --version))"
+        log_success "Docker already installed ($(docker --version))"
         return
     fi
-    
-    log_info "Installazione Docker..."
-    
-    # Rimuovi vecchie versioni
+
+    log_info "Installing Docker..."
+
+    # Remove old versions
     sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
-    
-    # Aggiungi repository Docker
+
+    # Add Docker repository
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     rm get-docker.sh
-    
-    # Aggiungi utente al gruppo docker
+
+    # Add user to docker group
     sudo usermod -aG docker $USER
-    
-    log_success "Docker installato!"
-    log_warning "Dovrai fare logout e login per applicare i permessi del gruppo docker"
+
+    log_success "Docker installed!"
+    log_warning "You will need to logout and login to apply docker group permissions"
 }
 
-# Installa Docker Compose
+# Install Docker Compose
 install_docker_compose() {
-    log_info "Controllo Docker Compose..."
-    
-    # Docker Compose v2 è incluso in Docker Desktop e nelle versioni recenti
+    log_info "Checking Docker Compose..."
+
+    # Docker Compose v2 is included in Docker Desktop and recent versions
     if docker compose version &> /dev/null; then
-        log_success "Docker Compose v2 già disponibile ($(docker compose version))"
+        log_success "Docker Compose v2 already available ($(docker compose version))"
         return
     fi
-    
-    # Fallback per installazione manuale
-    log_info "Installazione Docker Compose v2..."
-    
+
+    # Fallback for manual installation
+    log_info "Installing Docker Compose v2..."
+
     DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
     mkdir -p $DOCKER_CONFIG/cli-plugins
-    
-    # Scarica Docker Compose
+
+    # Download Docker Compose
     COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r '.tag_name')
-    
+
     if [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
         COMPOSE_ARCH="aarch64"
     elif [[ "$ARCH" == "armv7l" ]]; then
@@ -161,214 +161,250 @@ install_docker_compose() {
     else
         COMPOSE_ARCH="x86_64"
     fi
-    
+
     curl -SL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${COMPOSE_ARCH}" \
         -o $DOCKER_CONFIG/cli-plugins/docker-compose
-    
+
     chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
-    
-    log_success "Docker Compose installato!"
+
+    log_success "Docker Compose installed!"
 }
 
-# Crea directory necessarie
+# Create systemd service for web server
+setup_web_service() {
+    log_info "Setting up web service systemd..."
+
+    sudo tee /etc/systemd/system/pipassive-web.service > /dev/null << 'EOF'
+[Unit]
+Description=PiPassive Web Dashboard
+After=network.target docker.service
+Requires=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/PiPassive
+ExecStart=/usr/bin/python3 /home/pi/PiPassive/web-server.py
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=PYTHONPATH=/home/pi/PiPassive
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable pipassive-web.service
+    sudo systemctl start pipassive-web.service
+
+    log_success "Web service configured and started automatically!"
+}
+
+# Create necessary directories
 create_directories() {
-    log_info "Creazione directory..."
-    
+    log_info "Creating directories..."
+
     mkdir -p configs/{honeygain,earnapp,pawns,packetstream,traffmonetizer,repocket,earnfm,mystnode,packetshare}
     mkdir -p data/{honeygain,earnapp,pawns,packetstream,traffmonetizer,repocket,earnfm,mystnode,packetshare}
     mkdir -p logs
     mkdir -p backups
-    
-    log_success "Directory create!"
+
+    log_success "Directories created!"
 }
 
-# Copia file di esempio
+# Copy example files
 setup_config_files() {
-    log_info "Setup file di configurazione..."
-    
+    log_info "Setting up configuration files..."
+
     if [[ ! -f .env ]]; then
         if [[ -f .env.example ]]; then
             cp .env.example .env
-            log_success "File .env creato da template"
-            log_warning "IMPORTANTE: Configura il file .env con le tue credenziali!"
+            log_success "File .env created from template"
+            log_warning "IMPORTANT: Configure the .env file with your credentials!"
         else
-            log_warning "File .env.example non trovato"
+            log_warning "File .env.example not found"
         fi
     else
-        log_info "File .env già esistente, non sovrascritto"
+        log_info "File .env already exists, not overwritten"
     fi
 }
 
-# Ottimizzazioni per Raspberry Pi
+# Optimizations for Raspberry Pi
 optimize_raspberry_pi() {
-    log_info "Applicazione ottimizzazioni per Raspberry Pi..."
-    
-    # Aumenta memoria disponibile per containers
+    log_info "Applying optimizations for Raspberry Pi..."
+
+    # Increase memory available for containers
     if ! grep -q "vm.max_map_count" /etc/sysctl.conf; then
         echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
         sudo sysctl -p
     fi
-    
-    # Ottimizza swap per Raspberry Pi
+
+    # Optimize swap for Raspberry Pi
     if [[ -f /etc/dphys-swapfile ]]; then
         sudo dphys-swapfile swapoff || true
         sudo sed -i 's/CONF_SWAPSIZE=100/CONF_SWAPSIZE=2048/' /etc/dphys-swapfile 2>/dev/null || true
         sudo dphys-swapfile setup || true
         sudo dphys-swapfile swapon || true
     fi
-    
-    log_success "Ottimizzazioni applicate!"
+
+    log_success "Optimizations applied!"
 }
 
-# Configura hostname e mDNS
+# Configure hostname and mDNS
 setup_hostname_mdns() {
-    log_info "Configurazione hostname e mDNS..."
-    
-    # Cambia hostname da 'raspberrypi' a 'pipassive'
+    log_info "Configuring hostname and mDNS..."
+
+    # Change hostname from 'raspberrypi' to 'pipassive'
     CURRENT_HOSTNAME=$(hostname)
     if [[ "$CURRENT_HOSTNAME" != "pipassive" ]]; then
-        log_info "Cambio hostname da '$CURRENT_HOSTNAME' a 'pipassive'..."
+        log_info "Changing hostname from '$CURRENT_HOSTNAME' to 'pipassive'..."
         sudo hostnamectl set-hostname pipassive
-        log_success "Hostname impostato a 'pipassive'"
+        log_success "Hostname set to 'pipassive'"
     else
-        log_success "Hostname già impostato a 'pipassive'"
+        log_success "Hostname already set to 'pipassive'"
     fi
-    
-    # Abilita e riavvia Avahi per registrare il nuovo hostname
+
+    # Enable and restart Avahi to register the new hostname
     sudo systemctl enable avahi-daemon 2>/dev/null || true
     sudo systemctl restart avahi-daemon
     sleep 2
-    
-    log_success "mDNS configurato per 'pipassive.local'"
+
+    log_success "mDNS configured for 'pipassive.local'"
 }
 
-# Test installazione Docker
+# Test Docker installation
 test_docker() {
-    log_info "Test installazione Docker..."
-    
-    # Controlla se possiamo eseguire docker senza sudo
+    log_info "Testing Docker installation..."
+
+    # Check if we can run docker without sudo
     if docker ps &> /dev/null; then
-        log_success "Docker funziona correttamente!"
+        log_success "Docker works correctly!"
         docker run --rm hello-world > /dev/null 2>&1
-        log_success "Test container completato!"
+        log_success "Test container completed!"
     else
-        log_warning "Non puoi eseguire docker senza sudo"
-        log_info "Esegui: newgrp docker"
-        log_info "Oppure fai logout/login per applicare i permessi"
+        log_warning "You cannot run docker without sudo"
+        log_info "Run: newgrp docker"
+        log_info "Or logout/login to apply permissions"
     fi
 }
 
-# Rendi eseguibili gli script
+# Make scripts executable
 make_scripts_executable() {
-    log_info "Impostazione permessi script..."
-    
+    log_info "Setting script permissions..."
+
     chmod +x setup.sh 2>/dev/null || true
     chmod +x manage.sh 2>/dev/null || true
     chmod +x dashboard.sh 2>/dev/null || true
     chmod +x backup.sh 2>/dev/null || true
     chmod +x restore.sh 2>/dev/null || true
-    
-    log_success "Permessi impostati!"
+
+    log_success "Permissions set!"
 }
 
-# Riepilogo finale
+# Final summary
 print_summary() {
     echo
     echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${GREEN}║           Installazione Completata con Successo!          ║${NC}"
+    echo -e "${GREEN}║           Installation Completed Successfully!            ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════════════════════╝${NC}"
     echo
-    echo -e "${BLUE}▶ PROSSIMI PASSI:${NC}"
+    echo -e "${BLUE}▶ NEXT STEPS:${NC}"
     echo
-    echo -e "  ${YELLOW}Scegli come configurare i servizi:${NC}"
+    echo -e "  ${YELLOW}Choose how to configure services:${NC}"
     echo
-    echo -e "  ${GREEN}OPZIONE 1 - Via Web (Consigliato):${NC}"
-    echo -e "    1. ${GREEN}./manage.sh start${NC}"
-    echo -e "    2. Apri browser: ${GREEN}http://pipassive.local:8888/setup${NC}"
-    echo -e "    3. Riempi il modulo e salva"
+    echo -e "  ${GREEN}OPTION 1 - Via Web (Recommended):${NC}"
+    echo -e "    1. Open browser: ${GREEN}http://pipassive.local:8888/setup${NC}"
+    echo -e "    2. Fill the form and save"
     echo
-    echo -e "  ${GREEN}OPZIONE 2 - Via Terminale (CLI):${NC}"
+    echo -e "  ${GREEN}OPTION 2 - Via Terminal (CLI):${NC}"
     echo -e "    1. ${GREEN}./setup.sh${NC}"
-    echo -e "    2. Rispondi alle domande interattive"
+    echo -e "    2. Answer the interactive questions"
     echo
-    echo -e "  ${YELLOW}Dopo la configurazione:${NC}"
-    echo -e "    • Accedi al dashboard: ${GREEN}http://pipassive.local:8888${NC}"
+    echo -e "  ${YELLOW}Service management:${NC}"
+    echo -e "    • Web Dashboard always active: ${GREEN}http://pipassive.local:8888${NC}"
+    echo -e "    • Start Docker containers: ${GREEN}./manage.sh start${NC}"
     echo -e "    • Quick Links: ${GREEN}http://pipassive.local:8888/links${NC}"
     echo
-    echo -e "${YELLOW}⚠️  IMPORTANTE - MystNode:${NC}"
-    echo -e "    Completa la configurazione su: ${GREEN}http://pipassive.local:4449${NC}"
+    echo -e "${YELLOW}⚠️  IMPORTANT - MystNode:${NC}"
+    echo -e "    Complete configuration at: ${GREEN}http://pipassive.local:4449${NC}"
     echo
-    echo -e "${BLUE}Documentazione:${NC}"
-    echo -e "  • README.md - Leggi per dettagli"
-    echo -e "  • PROJECT_STRUCTURE.md - Struttura file"
+    echo -e "${BLUE}Documentation:${NC}"
+    echo -e "  • README.md - Read for details"
+    echo -e "  • PROJECT_STRUCTURE.md - File structure"
     echo
-    echo -e "${YELLOW}Sicurezza:${NC}"
-    echo -e "  • .env contiene credenziali (mai condividere)"
-    echo -e "  • Monitoraggio: ${GREEN}./manage.sh status${NC}"
+    echo -e "${YELLOW}Security:${NC}"
+    echo -e "  • .env contains credentials (never share)"
+    echo -e "  • Monitoring: ${GREEN}./manage.sh status${NC}"
     echo
 }
 
 # Main
 main() {
     print_logo
-    
-    log_info "Inizio installazione PiPassive..."
+
+    log_info "Starting PiPassive installation..."
     echo
-    
+
     check_root
     check_system
-    
+
     echo
-    read -p "Procedere con l'installazione? (y/n) " -n 1 -r
+    read -p "Proceed with installation? (y/n) " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        log_info "Installazione annullata."
+        log_info "Installation cancelled."
         exit 0
     fi
-    
+
     echo
-    log_info "=== FASE 1: Aggiornamento Sistema ==="
+    log_info "=== PHASE 1: System Update ==="
     update_system
-    
+
     echo
-    log_info "=== FASE 2: Installazione Dipendenze ==="
+    log_info "=== PHASE 2: Dependencies Installation ==="
     install_dependencies
-    
+
     echo
-    log_info "=== FASE 3: Installazione Docker ==="
+    log_info "=== PHASE 3: Docker Installation ==="
     install_docker
-    
+
     echo
-    log_info "=== FASE 4: Installazione Docker Compose ==="
+    log_info "=== PHASE 4: Docker Compose Installation ==="
     install_docker_compose
-    
+
     echo
-    log_info "=== FASE 5: Creazione Directory ==="
+    log_info "=== PHASE 5: Directory Creation ==="
     create_directories
-    
+
     echo
-    log_info "=== FASE 6: Setup Configurazione ==="
+    log_info "=== PHASE 6: Configuration Setup ==="
     setup_config_files
-    
+
     echo
-    log_info "=== FASE 7: Ottimizzazioni Sistema ==="
+    log_info "=== PHASE 7: System Optimizations ==="
     optimize_raspberry_pi
-    
+
     echo
-    log_info "=== FASE 8: Configurazione Hostname e mDNS ==="
+    log_info "=== PHASE 8: Hostname and mDNS Configuration ==="
     setup_hostname_mdns
-    
+
     echo
-    log_info "=== FASE 9: Impostazione Permessi ==="
+    log_info "=== PHASE 9: Permissions Setup ==="
     make_scripts_executable
-    
+
     echo
-    log_info "=== FASE 10: Test Installazione ==="
+    log_info "=== PHASE 10: Web Service Configuration ==="
+    setup_web_service
+
+    echo
+    log_info "=== PHASE 11: Installation Test ==="
     test_docker
-    
+
     echo
     print_summary
 }
 
-# Esegui main
+# Execute main
 main "$@"

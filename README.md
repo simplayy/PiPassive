@@ -1,170 +1,169 @@
 # 🍓 PiPassive - Raspberry Pi Passive Income Automator
 
-Sistema automatizzato per installare e gestire multiple applicazioni di passive income sul tuo Raspberry Pi con un solo click!
+Automated system to install and manage multiple passive income applications on your Raspberry Pi with one click!
 
-## 📋 Servizi Supportati
+## 📋 Supported Services
 
-Questo progetto gestisce automaticamente i seguenti servizi:
+This project automatically manages the following services:
 
-1. **Honeygain** - Condividi la tua connessione internet
-2. **EarnApp** - Guadagna condividendo banda internet
-3. **Pawns.app** - Monetizza la tua connessione
-4. **PacketStream** - Condivisione di banda per ricerche di mercato
-5. **TraffMonetizer** - Condivisione traffico internet
+1. **Honeygain** - Share your internet connection
+2. **EarnApp** - Earn by sharing internet bandwidth
+3. **Pawns.app** - Monetize your connection
+4. **PacketStream** - Bandwidth sharing for market research
+5. **TraffMonetizer** - Internet traffic sharing
 6. **Repocket** - Network sharing platform
-7. **EarnFM** - Guadagna dalla tua banda inutilizzata
-8. **MystNode** - Nodo decentralizzato VPN
-9. **PacketShare** - Condivisione pacchetti per passive income
+7. **EarnFM** - Earn from your unused bandwidth
+8. **MystNode** - Decentralized VPN node
+9. **PacketShare** - Packet sharing for passive income
 
-## 🚀 Installazione Rapida (One-Click)
+## 🚀 Quick Installation (One-Click)
 
-### Prerequisiti
-- Raspberry Pi (3, 4 o 5) con Raspberry Pi OS
-- Connessione internet
-- Accesso SSH o terminale locale
+### Prerequisites
+- Raspberry Pi (3, 4 or 5) with Raspberry Pi OS
+- Internet connection
+- SSH access or local terminal
 
-### Installazione Automatica
+### Automatic Installation
 
 ```bash
-# Clona il repository
-git clone https://github.com/tuousername/PiPassive.git
+# Clone the repository
+git clone https://github.com/simplayy/PiPassive.git
 cd PiPassive
 
-# Rendi eseguibile lo script di installazione
+# Make installation script executable
 chmod +x install.sh
 
-# Esegui l'installazione automatica
+# Run automatic installation
 ./install.sh
 ```
 
-Lo script installerà automaticamente:
-- Docker e Docker Compose
-- Tutte le dipendenze necessarie
-- Configurerà tutti i servizi di passive income
+The script will automatically install:
+- Docker and Docker Compose
+- All necessary dependencies
+- **Always active Web Dashboard** (starts automatically at boot)
+- Configure all passive income services
 
-## ⚙️ Configurazione
+## ⚙️ Configuration
 
-Dopo l'installazione, puoi configurare i servizi in due modi:
+After installation, you can configure services in two ways:
 
-### Opzione 1️⃣: Configurazione Web (Consigliato)
+### Option 1️⃣: Web Configuration (Recommended)
 
-La modalità più facile e intuitiva:
+The easiest and most intuitive way:
 
 ```bash
-# Avvia il web server
-./manage.sh start
-
-# Accedi al browser
+# Web dashboard is always active automatically
+# Access directly in your browser
 http://pipassive.local:8888/setup
 ```
 
-Nel browser troverai un modulo completo per configurare:
-- Tutti i servizi (credenziali API, token, ID)
-- Timezone e impostazioni di sistema
-- Istruzioni dirette per ogni servizio con link di registrazione
+In the browser you'll find a complete form to configure:
+- All services (API credentials, tokens, IDs)
+- Timezone and system settings
+- Direct instructions for each service with registration links
 
-Il modulo salverà automaticamente le configurazioni nel file `.env`.
+The form will automatically save configurations to the `.env` file.
 
-**Per MystNode**: Dopo la configurazione, accedi a `http://pipassive.local:4449` per completare l'identità del nodo.
+**For MystNode**: After configuration, access `http://pipassive.local:4449` to complete the node identity.
 
-### Opzione 2️⃣: Configurazione Terminale (CLI)
+### Option 2️⃣: Terminal Configuration (CLI)
 
-Per chi preferisce il terminale:
+For those who prefer the terminal:
 
 ```bash
 ./setup.sh
 ```
 
-Lo script ti guiderà passo-passo nella configurazione interattiva di ogni servizio, con domande dirette e istruzioni.
+The script will guide you step-by-step through the interactive configuration of each service, with direct questions and instructions.
 
-### Modalità Manuale (Avanzato)
+### Manual Mode (Advanced)
 
-Se preferisci modificare direttamente:
+If you prefer to edit directly:
 
 ```bash
-# Copia il template
+# Copy the template
 cp .env.example .env
 
-# Modifica con il tuo editor
+# Edit with your editor
 nano .env
 ```
 
-## 🎮 Gestione Servizi
+## 🎮 Service Management
 
-### Comandi Principali
+### Main Commands
 
 ```bash
-# Avvia tutti i servizi
+# Start all services
 ./manage.sh start
 
-# Ferma tutti i servizi
+# Stop all services
 ./manage.sh stop
 
-# Riavvia tutti i servizi
+# Restart all services
 ./manage.sh restart
 
-# Visualizza stato dei servizi
+# Show services status
 ./manage.sh status
 
-# Visualizza logs di un servizio specifico
+# Show logs of a specific service
 ./manage.sh logs honeygain
 
-# Aggiorna tutti i container
+# Update all containers
 ./manage.sh update
 ```
 
 ### Web Dashboard
 
-Accedi al dashboard web per monitorare i tuoi servizi in tempo reale:
+Access the web dashboard to monitor your services in real time:
 
 ```
 http://pipassive.local:8888
 ```
 
-Il dashboard include:
-- **Home**: Stato in tempo reale di tutti i servizi (Attivo/Inattivo)
-- **Setup**: Modulo web per configurare le credenziali
-- **Quick Links**: Accesso diretto ai dashboard ufficiali di ogni servizio
-- **Pulsanti Azioni**: Riavvia, Ferma, Visualizza Logs per ogni servizio
+The dashboard includes:
+- **Home**: Real-time status of all services (Active/Inactive)
+- **Setup**: Web form to configure credentials
+- **Quick Links**: Direct access to official dashboards of each service
+- **Action Buttons**: Restart, Stop, View Logs for each service
 
-Il web server si avvia automaticamente con `./manage.sh start` e rimane in esecuzione in background.
+The web server is **always active** thanks to a systemd service that starts automatically at system boot.
 
-## 📊 Monitoraggio
+## 📊 Monitoring
 
-Il sistema include:
-- Dashboard testuale in tempo reale
-- Logs centralizzati per ogni servizio
-- Status check automatici
-- Alert per servizi non funzionanti
+The system includes:
+- Real-time text dashboard
+- Centralized logs for each service
+- Automatic status checks
+- Alerts for non-functioning services
 
-## 🔧 Struttura del Progetto
+## 🔧 Project Structure
 
 ```
 PiPassive/
-├── README.md                 # Questo file
-├── install.sh               # Script di installazione principale
-├── setup.sh                 # Script di configurazione interattiva
-├── manage.sh                # Script di gestione servizi
-├── dashboard.sh             # Dashboard di monitoraggio
-├── docker-compose.yml       # Configurazione Docker Compose
-├── .env.example             # Template variabili d'ambiente
-├── backup.sh                # Script di backup
-├── restore.sh               # Script di ripristino
-├── docs/                    # Documentazione dettagliata
-│   ├── services.md          # Guida per ottenere API keys
-│   ├── troubleshooting.md   # Risoluzione problemi
-│   └── advanced.md          # Configurazioni avanzate
-└── configs/                 # Configurazioni servizi
-    └── [servizio]/          # Config per ogni servizio
+├── README.md                 # This file
+├── install.sh               # Main installation script
+├── setup.sh                 # Interactive configuration script
+├── manage.sh                # Service management script
+├── dashboard.sh             # Monitoring dashboard
+├── docker-compose.yml       # Docker Compose configuration
+├── .env.example             # Environment variables template
+├── backup.sh                # Backup script
+├── restore.sh               # Restore script
+├── docs/                    # Detailed documentation
+│   ├── services.md          # Guide to obtain API keys
+│   ├── troubleshooting.md   # Troubleshooting
+│   └── advanced.md          # Advanced configurations
+└── configs/                 # Service configurations
+    └── [service]/           # Config for each service
 ```
 
-## 📱 Ottenere le API Keys
+## 📱 Obtaining API Keys
 
-Ogni servizio richiede una registrazione. Segui la [guida dettagliata](docs/services.md) per ottenere:
+Each service requires registration. Follow the [detailed guide](docs/services.md) to obtain:
 
-1. **Honeygain**: https://join.honeygain.com/SIMNI7E3A1 (con bonus $3)
+1. **Honeygain**: https://join.honeygain.com/SIMNI7E3A1 (with $3 bonus)
 2. **EarnApp**: https://earnapp.com/i/KSj1BgEi
-3. **Pawns**: https://pawns.app/?r=4060689 (con bonus $3)
+3. **Pawns**: https://pawns.app/?r=4060689 (with $3 bonus)
 4. **PacketStream**: https://packetstream.io/?psr=6GQZ
 5. **TraffMonetizer**: https://traffmonetizer.com/?aff=1677252
 6. **Repocket**: https://link.repocket.com/mnGO
@@ -172,14 +171,14 @@ Ogni servizio richiede una registrazione. Segui la [guida dettagliata](docs/serv
 8. **MystNode**: https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi
 9. **PacketShare**: https://www.packetshare.io/?code=F5AF0C1F37B0D827
 
-## 🔒 Sicurezza
+## 🔒 Security
 
-- Non committare mai il file `.env` con le tue credenziali
-- Usa password forti per ogni servizio
-- Mantieni aggiornato il sistema operativo
-- Monitora regolarmente i servizi
+- Never commit the `.env` file with your credentials
+- Use strong passwords for each service
+- Keep the operating system updated
+- Monitor services regularly
 
-## 🔄 Backup e Ripristino
+## 🔄 Backup and Restore
 
 ### Backup
 
@@ -187,9 +186,9 @@ Ogni servizio richiede una registrazione. Segui la [guida dettagliata](docs/serv
 ./backup.sh
 ```
 
-Crea un backup di tutte le configurazioni in `backups/backup_YYYYMMDD_HHMMSS.tar.gz`
+Creates a backup of all configurations in `backups/backup_YYYYMMDD_HHMMSS.tar.gz`
 
-### Ripristino
+### Restore
 
 ```bash
 ./restore.sh backups/backup_YYYYMMDD_HHMMSS.tar.gz
@@ -197,66 +196,66 @@ Crea un backup di tutte le configurazioni in `backups/backup_YYYYMMDD_HHMMSS.tar
 
 ## 🐛 Troubleshooting
 
-### Servizio non si avvia
+### Service won't start
 ```bash
-# Controlla i logs del servizio
-./manage.sh logs nome-servizio
+# Check service logs
+./manage.sh logs service-name
 
-# Riavvia il servizio specifico
-docker-compose restart nome-servizio
+# Restart specific service
+docker-compose restart service-name
 ```
 
-### Problemi di rete
+### Network problems
 ```bash
-# Verifica la connettività
+# Check connectivity
 ping 8.8.8.8
 
-# Riavvia il networking
+# Restart networking
 sudo systemctl restart networking
 ```
 
-Per altri problemi, consulta la [guida troubleshooting](docs/troubleshooting.md).
+For other problems, check the [troubleshooting guide](docs/troubleshooting.md).
 
-## 📈 Performance e Guadagni
+## 📈 Performance and Earnings
 
-I guadagni variano in base a:
-- Qualità della connessione internet
-- Posizione geografica
-- Numero di servizi attivi
-- Tempo di uptime
+Earnings vary based on:
+- Internet connection quality
+- Geographic location
+- Number of active services
+- Uptime duration
 
-**Media stimata**: $20-50 al mese (dipende molto dai fattori sopra)
+**Estimated average**: $20-50 per month (highly depends on the factors above)
 
-## 🤝 Contribuire
+## 🤝 Contributing
 
-Contributi sono benvenuti! Per favore:
-1. Fai fork del progetto
-2. Crea un branch per la tua feature
-3. Commit le tue modifiche
-4. Push al branch
-5. Apri una Pull Request
+Contributions are welcome! Please:
+1. Fork the project
+2. Create a branch for your feature
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
 ## 📝 License
 
-MIT License - vedi [LICENSE](LICENSE) per dettagli
+MIT License - see [LICENSE](LICENSE) for details
 
 ## ⚠️ Disclaimer
 
-- Usa questi servizi a tuo rischio
-- Verifica le leggi locali sulla condivisione di banda internet
-- Leggi attentamente i ToS di ogni servizio
-- Non garantiamo guadagni specifici
-- Monitora il consumo di banda del tuo ISP
+- Use these services at your own risk
+- Check local laws regarding internet bandwidth sharing
+- Carefully read the ToS of each service
+- We do not guarantee specific earnings
+- Monitor your ISP bandwidth usage
 
-## 📞 Supporto
+## 📞 Support
 
-- Issues: [GitHub Issues](https://github.com/tuousername/PiPassive/issues)
-- Discussioni: [GitHub Discussions](https://github.com/tuousername/PiPassive/discussions)
+- Issues: [GitHub Issues](https://github.com/simplayy/PiPassive/issues)
+- Discussions: [GitHub Discussions](https://github.com/simplayy/PiPassive/discussions)
 
-## 🙏 Crediti
+## 🙏 Credits
 
-Creato con ❤️ per la community Raspberry Pi
+Created with ❤️ for the Raspberry Pi community
 
 ---
 
-**Note**: Questo progetto è fornito "as-is". Assicurati di comprendere cosa fa ogni servizio prima di utilizzarlo.
+**Note**: This project is provided "as-is". Make sure you understand what each service does before using it.

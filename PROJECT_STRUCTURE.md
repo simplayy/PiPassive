@@ -1,32 +1,32 @@
-# 📁 PiPassive - Struttura Progetto
+# 📁 PiPassive - Project Structure
 
 ```
 PiPassive/
 │
-├── 📄 README.md                      # Documentazione principale del progetto
-├── 📄 QUICKSTART.md                  # Guida rapida per iniziare in 5 minuti
-├── 📄 CHANGELOG.md                   # Storia delle versioni e modifiche
-├── 📄 CONTRIBUTING.md                # Guida per contributors
-├── 📄 LICENSE                        # Licenza MIT
-├── 📄 Makefile                       # Comandi semplificati (make start, make stop, etc.)
+├── 📄 README.md                      # Main project documentation
+├── 📄 QUICKSTART.md                  # Quick start guide in 5 minutes
+├── 📄 CHANGELOG.md                   # Version history and changes
+├── 📄 CONTRIBUTING.md                # Guide for contributors
+├── 📄 LICENSE                        # MIT License
+├── 📄 Makefile                       # Simplified commands (make start, make stop, etc.)
 │
-├── 🐳 docker-compose.yml             # Configurazione Docker Compose con tutti i 9 servizi
-├── 📋 .env.example                   # Template per variabili d'ambiente (credenziali)
-├── 🚫 .gitignore                     # File da ignorare in Git (include .env)
+├── 🐳 docker-compose.yml             # Docker Compose configuration with all 9 services
+├── 📋 .env.example                   # Environment variables template (credentials)
+├── 🚫 .gitignore                     # Files to ignore in Git (includes .env)
 │
-├── 🔧 Scripts Principali
-│   ├── install.sh                    # ⚙️  Installazione completa (Docker, dipendenze, setup)
-│   ├── setup.sh                      # 📝 Configurazione interattiva (credenziali, API keys)
-│   ├── manage.sh                     # 🎮 Gestione servizi (start, stop, restart, logs, etc.)
-│   ├── dashboard.sh                  # 📊 Dashboard monitoraggio real-time
-│   ├── backup.sh                     # 💾 Backup configurazioni
-│   └── restore.sh                    # ♻️  Ripristino da backup
+├── 🔧 Main Scripts
+│   ├── install.sh                    # ⚙️  Complete installation (Docker, dependencies, setup)
+│   ├── setup.sh                      # 📝 Interactive configuration (credentials, API keys)
+│   ├── manage.sh                     # 🎮 Service management (start, stop, restart, logs, etc.)
+│   ├── dashboard.sh                  # 📊 Real-time monitoring dashboard
+│   ├── backup.sh                     # 💾 Backup configurations
+│   └── restore.sh                    # ♻️  Restore from backup
 │
-├── 📚 docs/                          # Documentazione dettagliata
-│   ├── README.md                     # Indice documentazione
-│   ├── services.md                   # Come ottenere API keys per ogni servizio
-│   ├── troubleshooting.md            # Risoluzione problemi comuni
-│   └── advanced.md                   # Configurazioni avanzate
+├── 📚 docs/                          # Detailed documentation
+│   ├── README.md                     # Documentation index
+│   ├── services.md                   # How to obtain API keys for each service
+│   ├── troubleshooting.md            # Common problem resolution
+│   └── advanced.md                   # Advanced configurations
 │
 ├── 📁 configs/                       # Configurazioni servizi (creata da install.sh)
 │   ├── honeygain/

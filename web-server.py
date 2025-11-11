@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 PiPassive Web Dashboard Server
-Server minimalista per la gestione dei servizi via web
+Minimalist server for web-based service management
 """
 
 import subprocess

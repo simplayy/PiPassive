@@ -56,8 +56,8 @@ Esplora:
 - [Come Contribuire](../CONTRIBUTING.md) - Unisciti allo sviluppo
 
 ### Supporto
-- [GitHub Issues](https://github.com/tuousername/PiPassive/issues) - Segnala bug
-- [GitHub Discussions](https://github.com/tuousername/PiPassive/discussions) - Fai domande
+- [GitHub Issues](https://github.com/simplayy/PiPassive/issues) - Segnala bug
+- [GitHub Discussions](https://github.com/simplayy/PiPassive/discussions) - Fai domande
 - [Changelog](../CHANGELOG.md) - Novità e aggiornamenti
 
 ---
@@ -151,7 +151,7 @@ Vedi [CONTRIBUTING.md](../CONTRIBUTING.md) per contribuire!
 
 1. **Cerca prima** nella documentazione
 2. **Controlla** le [FAQ](troubleshooting.md)
-3. **Cerca** nelle [Issues esistenti](https://github.com/tuousername/PiPassive/issues)
+3. **Cerca** nelle [Issues esistenti](https://github.com/simplayy/PiPassive/issues)
 4. **Apri** una nuova issue con dettagli
 
 ---

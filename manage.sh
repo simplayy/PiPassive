@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ################################################################################
-# PiPassive - Script di Gestione Servizi
-# Gestisce avvio, stop, restart e monitoring dei servizi
+# PiPassive - Service Management Script
+# Manages start, stop, restart and monitoring of services
 ################################################################################
 
 # Colors
@@ -14,11 +14,11 @@ CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
 NC='\033[0m'
 
-# Configurazione
+# Configuration
 COMPOSE_FILE="docker-compose.yml"
 ENV_FILE=".env"
 
-# Lista servizi Docker
+# Docker services list
 SERVICES=(
     "honeygain"
     "pawns"
@@ -30,7 +30,7 @@ SERVICES=(
     "traffmonetizer"
 )
 
-# Funzioni di logging
+# Logging functions
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
@@ -82,27 +82,71 @@ EOF
     echo -e "${NC}"
 }
 
+# Crea servizio systemd per web server se non esiste
+setup_web_service() {
+    if [[ ! -f "/etc/systemd/system/pipassive-web.service" ]]; then
+        log_info "Creazione servizio systemd per web server..."
+        sudo tee /etc/systemd/system/pipassive-web.service > /dev/null << 'EOF'
+[Unit]
+Description=PiPassive Web Dashboard
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/PiPassive
+ExecStart=/usr/bin/python3 /home/pi/PiPassive/web-server.py
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        sudo systemctl daemon-reload
+        sudo systemctl enable pipassive-web.service
+        log_success "Servizio web creato e abilitato per auto-avvio"
+    else
+        # Se il servizio esiste ma non è abilitato, abilitarlo
+        if ! sudo systemctl is-enabled --quiet pipassive-web.service 2>/dev/null; then
+            log_info "Abilitazione servizio web per auto-avvio..."
+            sudo systemctl enable pipassive-web.service
+            log_success "Servizio web abilitato per auto-avvio"
+        fi
+    fi
+}
+
 # Avvia tutti i servizi
 start_all() {
     log_info "Avvio di tutti i servizi..."
     echo
-    
-    docker compose up -d
-    
-    # Avvia il web server in background
+
+    # Assicurati che il servizio web esista e sia abilitato
+    setup_web_service
+
+    # Avvia servizio web
     log_info "Avvio del web server..."
-    if [[ -f "web-server.py" ]]; then
-        python3 web-server.py > /dev/null 2>&1 &
-        WEB_SERVER_PID=$!
-        echo $WEB_SERVER_PID > .web-server.pid
-        sleep 1
-        log_success "Web server avviato (PID: $WEB_SERVER_PID)"
+    if sudo systemctl is-active --quiet pipassive-web.service 2>/dev/null; then
+        log_info "Web server già attivo"
+    else
+        sudo systemctl start pipassive-web.service
+        sleep 2
+        if sudo systemctl is-active --quiet pipassive-web.service; then
+            log_success "Web server avviato automaticamente"
+        else
+            log_warning "Web server non si è avviato, controllo logs..."
+            sudo systemctl status pipassive-web.service --no-pager -l || true
+        fi
     fi
-    
+
+    docker compose up -d
+
     echo
-    log_success "Tutti i servizi Docker sono stati avviati!"
+    log_success "Tutti i container Docker sono stati avviati!"
     echo
-    log_info "Dashboard web: http://pipassive.local:8888"
+    log_info "Dashboard web sempre attivo: http://pipassive.local:8888"
     log_info "Configurazione: http://pipassive.local:8888/setup"
     log_info ""
     log_info "Usa './manage.sh status' per verificare lo stato"
@@ -126,17 +170,15 @@ start_service() {
 # Ferma tutti i servizi
 stop_all() {
     log_info "Arresto di tutti i servizi..."
-    
+
     # Ferma il web server
-    if [[ -f ".web-server.pid" ]]; then
-        WEB_SERVER_PID=$(cat .web-server.pid)
-        kill $WEB_SERVER_PID 2>/dev/null || true
-        rm -f .web-server.pid
+    if sudo systemctl is-active --quiet pipassive-web.service 2>/dev/null; then
+        sudo systemctl stop pipassive-web.service
         log_info "Web server fermato"
     fi
-    
+
     docker compose down
-    
+
     log_success "Tutti i servizi sono stati fermati!"
 }
 
@@ -158,9 +200,15 @@ stop_service() {
 # Riavvia tutti i servizi
 restart_all() {
     log_info "Riavvio di tutti i servizi..."
-    
+
+    # Riavvia web server
+    if sudo systemctl is-active --quiet pipassive-web.service 2>/dev/null; then
+        sudo systemctl restart pipassive-web.service
+        log_info "Web server riavviato"
+    fi
+
     docker compose restart
-    
+
     log_success "Tutti i servizi sono stati riavviati!"
 }
 
@@ -211,6 +259,14 @@ show_status() {
     echo -e "${BLUE}Servizi di Sistema (Opzionali - Non-Docker):${NC}"
     echo
     
+    # Web Server
+    if sudo systemctl is-active --quiet pipassive-web.service 2>/dev/null; then
+        echo -e "  ${GREEN}✓${NC} Web Server ${GREEN}(running)${NC} - http://pipassive.local:8888"
+    else
+        echo -e "  ${YELLOW}○${NC} Web Server (fermato)"
+        echo -e "     Avvia: ${CYAN}./manage.sh start${NC}"
+    fi
+
     # EarnApp
     if systemctl is-active --quiet earnapp 2>/dev/null; then
         echo -e "  ${GREEN}✓${NC} EarnApp ${GREEN}(running)${NC}"
@@ -218,7 +274,7 @@ show_status() {
         echo -e "  ${YELLOW}○${NC} EarnApp (non installato)"
         echo -e "     Installa: ${CYAN}wget -qO- https://brightdata.com/static/earnapp/install.sh > /tmp/earnapp.sh && sudo bash /tmp/earnapp.sh${NC}"
     fi
-    
+
     echo
 }
 

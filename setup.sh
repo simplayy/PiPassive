@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ################################################################################
-# PiPassive - Script di Setup Configurazione Interattivo
-# Guida l'utente nella configurazione di tutti i servizi
+# PiPassive - Interactive Setup Configuration Script
+# Guides the user through configuration of all services
 ################################################################################
 
 # Colors
@@ -14,11 +14,11 @@ CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
 NC='\033[0m'
 
-# File di configurazione
+# Configuration files
 ENV_FILE=".env"
 ENV_EXAMPLE=".env.example"
 
-# Funzioni di logging
+# Logging functions
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }

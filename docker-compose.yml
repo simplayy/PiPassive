@@ -1,12 +1,12 @@
 ################################################################################
 # PiPassive - Docker Compose Configuration
-# Gestisce tutti i servizi di passive income
+# Manages all passive income services
 ################################################################################
 
 services:
   
   # =============================================================================
-  # HONEYGAIN - Condivisione banda internet
+  # HONEYGAIN - Internet bandwidth sharing
   # =============================================================================
   honeygain:
     image: honeygain/honeygain:latest
