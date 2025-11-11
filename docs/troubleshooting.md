@@ -205,7 +205,7 @@ nano .env
 **Soluzione:**
 ```bash
 # L'UUID deve essere nel formato: sdk-node-xxxxxxxxxxxxx
-# Ottienilo da: https://earnapp.com/dashboard
+# Ottienilo da: https://earnapp.com/dashboard (o usa il referral: https://earnapp.com/i/KSj1BgEi)
 
 nano .env
 # Verifica EARNAPP_UUID (no spazi, no newline)

@@ -9,8 +9,8 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Condivide la tua connessione internet inutilizzata per ricerche di mercato.
 
 **Registrazione:**
-1. Vai su: https://honeygain.com/
-2. Clicca su "Sign Up" o usa un referral link
+1. Vai su: https://join.honeygain.com/SIMNI7E3A1 (con bonus $3)
+2. Clicca su "Sign Up" o usa il referral link
 3. Registrati con email e password
 4. Verifica la tua email
 
@@ -31,7 +31,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Monetizza la tua bandwidth per content delivery e web intelligence.
 
 **Registrazione:**
-1. Vai su: https://earnapp.com/
+1. Vai su: https://earnapp.com/i/KSj1BgEi
 2. Registrati con Google, email, o altro metodo
 3. Vai su Dashboard > Installation
 
@@ -39,7 +39,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 - Device UUID (formato: `sdk-node-xxxxxxxxxxxxx`)
 
 **Come ottenere l'UUID:**
-1. Login su https://earnapp.com/dashboard
+1. Login su https://earnapp.com/dashboard (o usa il referral: https://earnapp.com/i/KSj1BgEi)
 2. Clicca su "Add Device" o "Installation"
 3. Scegli "Other Devices" o "Linux"
 4. Copia il comando mostrato, l'UUID è nel formato `sdk-node-xxxxx`
@@ -56,7 +56,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Condivisione di IP per servizi proxy residenziali.
 
 **Registrazione:**
-1. Vai su: https://pawns.app/
+1. Vai su: https://pawns.app/?r=4060689 (con bonus $3)
 2. Clicca su "Sign Up"
 3. Registrati con email e password
 
@@ -77,7 +77,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Rete di proxy residenziali per ricerche di mercato.
 
 **Registrazione:**
-1. Vai su: https://packetstream.io/
+1. Vai su: https://packetstream.io/?psr=6GQZ
 2. Clicca su "Sign Up"
 3. Completa la registrazione
 
@@ -85,7 +85,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 - CID (Customer ID)
 
 **Come ottenere il CID:**
-1. Login su https://packetstream.io/dashboard
+1. Login su https://packetstream.io/dashboard (o usa il referral: https://packetstream.io/?psr=6GQZ)
 2. Vai su "Download" o "Add Device"
 3. Nelle istruzioni di installazione troverai il CID
 4. Il CID è una stringa alfanumerica unica
@@ -102,7 +102,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Condivisione di traffico internet per data intelligence.
 
 **Registrazione:**
-1. Vai su: https://traffmonetizer.com/
+1. Vai su: https://traffmonetizer.com/?aff=1677252
 2. Clicca su "Sign Up"
 3. Completa la registrazione
 
@@ -110,7 +110,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 - Application Token
 
 **Come ottenere il Token:**
-1. Login su https://traffmonetizer.com/dashboard
+1. Login su https://traffmonetizer.com/dashboard (o usa il referral: https://traffmonetizer.com/?aff=1677252)
 2. Cerca "Your Application Token" nella dashboard
 3. Copia il token (è una stringa lunga)
 
@@ -126,7 +126,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Network sharing per web intelligence e security testing.
 
 **Registrazione:**
-1. Vai su: https://repocket.co/
+1. Vai su: https://link.repocket.com/mnGO
 2. Clicca su "Sign Up"
 3. Registrati con email
 
@@ -135,7 +135,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 - API Key
 
 **Come ottenere l'API Key:**
-1. Login su https://repocket.co/dashboard
+1. Login su https://repocket.co/dashboard (o usa il referral: https://link.repocket.com/mnGO)
 2. Vai sulla sezione "API" o "Settings"
 3. Clicca su "Generate API Key" o "Create New Key"
 4. Copia e salva l'API key
@@ -152,7 +152,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Condivisione di bandwidth per content delivery network.
 
 **Registrazione:**
-1. Vai su: https://earn.fm/
+1. Vai su: https://earn.fm/ref/SIMO7N4P
 2. Registrati con email
 3. Verifica il tuo account
 
@@ -160,7 +160,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 - Installation Token
 
 **Come ottenere il Token:**
-1. Login su https://earn.fm/dashboard
+1. Login su https://earn.fm/dashboard (o usa il referral: https://earn.fm/ref/SIMO7N4P)
 2. Vai su "Devices" o "Installation"
 3. Clicca su "Add Device"
 4. Copia il token di installazione
@@ -177,7 +177,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Nodo VPN decentralizzato, guadagni fornendo servizi VPN.
 
 **Registrazione:**
-1. Vai su: https://mystnodes.com/
+1. Vai su: https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi
 2. Registrati (opzionale per monitoraggio)
 3. Il nodo genererà un'identità automaticamente
 
@@ -203,7 +203,7 @@ Questa guida ti aiuterà a registrarti e ottenere le credenziali necessarie per 
 **Cosa fa:** Condivisione di bandwidth per network research.
 
 **Registrazione:**
-1. Vai su: https://packetshare.io/
+1. Vai su: https://www.packetshare.io/?code=F5AF0C1F37B0D827
 2. Registrati con email e password
 3. Verifica l'account
 
@@ -309,15 +309,15 @@ Per tutti i servizi:
 
 ## 📞 Link Utili
 
-- **Honeygain**: https://honeygain.com/ | Dashboard: https://dashboard.honeygain.com/
-- **EarnApp**: https://earnapp.com/ | Dashboard: https://earnapp.com/dashboard
-- **Pawns**: https://pawns.app/ | Dashboard: https://pawns.app/dashboard
-- **PacketStream**: https://packetstream.io/ | Dashboard: https://packetstream.io/dashboard
-- **TraffMonetizer**: https://traffmonetizer.com/ | Dashboard: https://traffmonetizer.com/dashboard
-- **Repocket**: https://repocket.co/ | Dashboard: https://repocket.co/dashboard
-- **EarnFM**: https://earn.fm/ | Dashboard: https://earn.fm/dashboard
-- **MystNode**: https://mystnodes.com/ | Dashboard: Locale su porta 4449
-- **PacketShare**: https://packetshare.io/ | Dashboard: https://packetshare.io/dashboard
+- **Honeygain**: https://join.honeygain.com/SIMNI7E3A1 (bonus $3) | Dashboard: https://dashboard.honeygain.com/
+- **EarnApp**: https://earnapp.com/i/KSj1BgEi | Dashboard: https://earnapp.com/dashboard
+- **Pawns**: https://pawns.app/?r=4060689 (bonus $3) | Dashboard: https://pawns.app/dashboard
+- **PacketStream**: https://packetstream.io/?psr=6GQZ | Dashboard: https://packetstream.io/dashboard
+- **TraffMonetizer**: https://traffmonetizer.com/?aff=1677252 | Dashboard: https://traffmonetizer.com/dashboard
+- **Repocket**: https://link.repocket.com/mnGO | Dashboard: https://repocket.co/dashboard
+- **EarnFM**: https://earn.fm/ref/SIMO7N4P | Dashboard: https://earn.fm/dashboard
+- **MystNode**: https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi | Dashboard: Locale su porta 4449
+- **PacketShare**: https://www.packetshare.io/?code=F5AF0C1F37B0D827 | Dashboard: https://packetshare.io/dashboard
 
 ---
 

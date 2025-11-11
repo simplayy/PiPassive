@@ -162,15 +162,15 @@ PiPassive/
 
 Ogni servizio richiede una registrazione. Segui la [guida dettagliata](docs/services.md) per ottenere:
 
-1. **Honeygain**: https://r.honeygain.me/YOURCODE
-2. **EarnApp**: https://earnapp.com/i/YOURCODE
-3. **Pawns**: https://pawns.app/
-4. **PacketStream**: https://packetstream.io/
-5. **TraffMonetizer**: https://traffmonetizer.com/
-6. **Repocket**: https://repocket.co/
-7. **EarnFM**: https://earn.fm/
-8. **MystNode**: https://mystnodes.com/
-9. **PacketShare**: https://packetshare.io/
+1. **Honeygain**: https://join.honeygain.com/SIMNI7E3A1 (con bonus $3)
+2. **EarnApp**: https://earnapp.com/i/KSj1BgEi
+3. **Pawns**: https://pawns.app/?r=4060689 (con bonus $3)
+4. **PacketStream**: https://packetstream.io/?psr=6GQZ
+5. **TraffMonetizer**: https://traffmonetizer.com/?aff=1677252
+6. **Repocket**: https://link.repocket.com/mnGO
+7. **EarnFM**: https://earn.fm/ref/SIMO7N4P
+8. **MystNode**: https://mystnodes.co/?referral_code=Z2MtvYCSj92pngdiqavF51ZLxs1ZQtWHY6ap0Lsi
+9. **PacketShare**: https://www.packetshare.io/?code=F5AF0C1F37B0D827
 
 ## 🔒 Sicurezza
 
