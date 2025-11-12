@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ################################################################################
-# PiPassive - Script di Backup
-# Crea backup completo di configurazioni e dati
+# PiPassive - Backup Script
+# Creates complete backup of configurations and data
 ################################################################################
 
 set -e
@@ -44,7 +44,7 @@ print_header() {
     echo -e "${CYAN}"
     cat << "EOF"
     ╔════════════════════════════════════════════════════════╗
-    ║         PiPassive - Backup Configurazione              ║
+    ║         PiPassive - Backup Configuration               ║
     ╚════════════════════════════════════════════════════════╝
 EOF
     echo -e "${NC}"
@@ -76,8 +76,8 @@ backup_env() {
 backup_compose() {
     log_info "Backup docker-compose.yml..."
     
-    if [[ -f docker-compose.yml ]]; then
-        cp docker-compose.yml "${BACKUP_PATH}/docker-compose.yml"
+    if [[ -f config/docker-compose.yml ]]; then
+        cp config/docker-compose.yml "${BACKUP_PATH}/docker-compose.yml"
         log_success "File docker-compose.yml salvato"
     else
         log_warning "File docker-compose.yml non trovato"

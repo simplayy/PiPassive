@@ -10,17 +10,28 @@ PiPassive/
 ├── 📄 LICENSE                        # MIT License
 ├── 📄 Makefile                       # Simplified commands (make start, make stop, etc.)
 │
-├── 🐳 docker-compose.yml             # Docker Compose configuration with all 9 services
 ├── 📋 .env.example                   # Environment variables template (credentials)
 ├── 🚫 .gitignore                     # Files to ignore in Git (includes .env)
 │
-├── 🔧 Main Scripts
+├── 📁 scripts/                       # Executable scripts
 │   ├── install.sh                    # ⚙️  Complete installation (Docker, dependencies, setup)
 │   ├── setup.sh                      # 📝 Interactive configuration (credentials, API keys)
 │   ├── manage.sh                     # 🎮 Service management (start, stop, restart, logs, etc.)
 │   ├── dashboard.sh                  # 📊 Real-time monitoring dashboard
 │   ├── backup.sh                     # 💾 Backup configurations
 │   └── restore.sh                    # ♻️  Restore from backup
+│
+├── 📁 src/                           # Source code
+│   ├── web-server.py                 # 🌐 Flask web server for dashboard
+│   ├── setup-dashboard.html          # 📝 Web configuration form
+│   ├── web-dashboard.html            # 📊 Main dashboard interface
+│   ├── web-links.html                # 🔗 Quick links to services
+│   └── services/                     # 🔧 Service-specific scripts
+│       └── earnapp-install.sh        # Auto-install EarnApp
+│
+├── 📁 config/                        # Configuration files
+│   ├── docker-compose.yml            # 🐳 Docker Compose configuration with all 9 services
+│   └── configs/                      # Service-specific configurations
 │
 ├── 📚 docs/                          # Detailed documentation
 │   ├── README.md                     # Documentation index

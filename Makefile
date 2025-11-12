@@ -18,53 +18,53 @@ help: ## Mostra questo messaggio di aiuto
 
 install: ## Installa Docker e dipendenze
 	@echo "$(BLUE)Installazione PiPassive...$(NC)"
-	@./install.sh
+	@./scripts/install.sh
 
 setup: ## Configura i servizi (interattivo)
 	@echo "$(BLUE)Setup configurazione...$(NC)"
-	@./setup.sh
+	@./scripts/setup.sh
 
 start: ## Avvia tutti i servizi
 	@echo "$(GREEN)Avvio servizi...$(NC)"
-	@./manage.sh start
+	@./scripts/manage.sh start
 
 stop: ## Ferma tutti i servizi
 	@echo "$(YELLOW)Arresto servizi...$(NC)"
-	@./manage.sh stop
+	@./scripts/manage.sh stop
 
 restart: ## Riavvia tutti i servizi
 	@echo "$(YELLOW)Riavvio servizi...$(NC)"
-	@./manage.sh restart
+	@./scripts/manage.sh restart
 
 status: ## Mostra status servizi
-	@./manage.sh status
+	@./scripts/manage.sh status
 
 logs: ## Mostra logs (usa: make logs SERVICE=honeygain)
-	@./manage.sh logs $(SERVICE)
+	@./scripts/manage.sh logs $(SERVICE)
 
 dashboard: ## Apri dashboard di monitoraggio
-	@./dashboard.sh
+	@./scripts/dashboard.sh
 
 backup: ## Crea backup configurazione
 	@echo "$(BLUE)Creazione backup...$(NC)"
-	@./backup.sh
+	@./scripts/backup.sh
 
 restore: ## Ripristina backup (usa: make restore BACKUP=file.tar.gz)
-	@./restore.sh $(BACKUP)
+	@./scripts/restore.sh $(BACKUP)
 
 update: ## Aggiorna tutti i container
 	@echo "$(BLUE)Aggiornamento container...$(NC)"
-	@./manage.sh update
+	@./scripts/manage.sh update
 
 stats: ## Mostra statistiche risorse
-	@./manage.sh stats
+	@./scripts/manage.sh stats
 
 clean: ## Rimuovi container e volumi (WARNING: rimuove dati!)
 	@echo "$(RED)ATTENZIONE: Questa operazione rimuoverà tutti i dati!$(NC)"
 	@read -p "Sei sicuro? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		./manage.sh clean; \
+		./scripts/manage.sh clean; \
 	fi
 
 test: ## Test ambiente (verifica installazione)
@@ -80,16 +80,16 @@ test: ## Test ambiente (verifica installazione)
 
 # Comandi per servizi specifici
 start-%: ## Avvia servizio specifico (es: make start-honeygain)
-	@./manage.sh start $*
+	@./scripts/manage.sh start $*
 
 stop-%: ## Ferma servizio specifico (es: make stop-honeygain)
-	@./manage.sh stop $*
+	@./scripts/manage.sh stop $*
 
 restart-%: ## Riavvia servizio specifico (es: make restart-honeygain)
-	@./manage.sh restart $*
+	@./scripts/manage.sh restart $*
 
 logs-%: ## Mostra logs servizio specifico (es: make logs-honeygain)
-	@./manage.sh logs $*
+	@./scripts/manage.sh logs $*
 
 # Quick aliases
 up: start ## Alias per start

@@ -19,7 +19,7 @@ class APIHandler(SimpleHTTPRequestHandler):
         if self.path == '/':
             # Verifica se esiste una configurazione valida
             if self.is_configured():
-                self.serve_file('web-dashboard.html', 'text/html')
+                self.serve_file('src/web-dashboard.html', 'text/html')
             else:
                 # Reindirizza automaticamente alla configurazione
                 self.send_response(302)
@@ -27,9 +27,9 @@ class APIHandler(SimpleHTTPRequestHandler):
                 self.end_headers()
                 return
         elif self.path == '/setup':
-            self.serve_file('setup-dashboard.html', 'text/html')
+            self.serve_file('src/setup-dashboard.html', 'text/html')
         elif self.path == '/links':
-            self.serve_file('web-links.html', 'text/html')
+            self.serve_file('src/web-links.html', 'text/html')
         elif self.path == '/api/status':
             self.send_json(self.get_status())
         elif self.path == '/api/config':

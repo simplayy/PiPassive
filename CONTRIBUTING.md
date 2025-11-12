@@ -1,148 +1,148 @@
 # 🤝 Contributing to PiPassive
 
-Grazie per l'interesse nel contribuire a PiPassive! Questo documento ti guiderà nel processo di contribuzione.
+Thank you for your interest in contributing to PiPassive! This document will guide you through the contribution process.
 
-## 📋 Indice
+## 📋 Table of Contents
 
-- [Come Contribuire](#come-contribuire)
-- [Segnalare Bug](#segnalare-bug)
-- [Proporre Feature](#proporre-feature)
-- [Pull Request](#pull-request)
+- [How to Contribute](#how-to-contribute)
+- [Reporting Bugs](#reporting-bugs)
+- [Feature Requests](#feature-requests)
+- [Pull Requests](#pull-requests)
 - [Coding Guidelines](#coding-guidelines)
 - [Testing](#testing)
 
 ---
 
-## 🚀 Come Contribuire
+## 🚀 How to Contribute
 
-Ci sono molti modi per contribuire a PiPassive:
+There are many ways to contribute to PiPassive:
 
-1. **🐛 Segnalare bug** - Hai trovato un problema? Apri una issue!
-2. **💡 Suggerire feature** - Hai un'idea? Condividila!
-3. **📝 Migliorare documentazione** - Correzioni, traduzioni, esempi
-4. **🔧 Scrivere codice** - Bug fix, nuove feature, ottimizzazioni
-5. **🧪 Testing** - Testa su diversi hardware e configurazioni
-6. **⭐ Supportare** - Metti una stella, condividi il progetto!
+1. **🐛 Report bugs** - Found a problem? Open an issue!
+2. **💡 Suggest features** - Have an idea? Share it!
+3. **📝 Improve documentation** - Corrections, translations, examples
+4. **🔧 Write code** - Bug fixes, new features, optimizations
+5. **🧪 Testing** - Test on different hardware and configurations
+6. **⭐ Support** - Star the project, share it!
 
 ---
 
-## 🐛 Segnalare Bug
+## 🐛 Reporting Bugs
 
-### Prima di segnalare
+### Before Reporting
 
-1. **Cerca nelle issue esistenti** - Il problema potrebbe essere già noto
-2. **Verifica la documentazione** - Consulta [troubleshooting.md](docs/troubleshooting.md)
-3. **Testa con configurazione pulita** - Verifica che non sia un problema locale
+1. **Search existing issues** - The problem might already be known
+2. **Check documentation** - Consult [troubleshooting.md](docs/troubleshooting.md)
+3. **Test with clean configuration** - Verify it's not a local issue
 
-### Come segnalare
+### How to Report
 
-Apri una **GitHub Issue** con:
+Open a **GitHub Issue** with:
 
-**Template Bug Report:**
+**Bug Report Template:**
 
 ```markdown
-## Descrizione del Bug
-[Descrizione chiara e concisa del problema]
+## Bug Description
+[Clear and concise description of the problem]
 
 ## Steps to Reproduce
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
-## Comportamento Atteso
-[Cosa ti aspettavi che succedesse]
+## Expected Behavior
+[What you expected to happen]
 
-## Comportamento Attuale
-[Cosa succede invece]
+## Actual Behavior
+[What happens instead]
 
 ## Logs
 ```
-[Incolla i logs rilevanti - RIMUOVI le credenziali!]
+[Paste relevant logs - REMOVE credentials!]
 ```
 
 ## Environment
-- Raspberry Pi Model: [es. Raspberry Pi 4 Model B 4GB]
-- OS: [es. Raspberry Pi OS Bullseye 64-bit]
-- Docker Version: [output di `docker --version`]
-- Docker Compose Version: [output di `docker compose version`]
+- Raspberry Pi Model: [e.g. Raspberry Pi 4 Model B 4GB]
+- OS: [e.g. Raspberry Pi OS Bullseye 64-bit]
+- Docker Version: [output of `docker --version`]
+- Docker Compose Version: [output of `docker compose version`]
 
-## File di Configurazione
-[Condividi docker-compose.yml o .env.example se rilevante - MAI .env con credenziali!]
+## Configuration Files
+[Share docker-compose.yml or .env.example if relevant - NEVER .env with credentials!]
 
-## Screenshot
-[Se applicabile]
+## Screenshots
+[If applicable]
 
-## Note Aggiuntive
-[Altre informazioni utili]
+## Additional Notes
+[Any other useful information]
 ```
 
 ---
 
-## 💡 Proporre Feature
+## 💡 Feature Requests
 
-### Prima di proporre
+### Before Proposing
 
-1. **Verifica che non esista già** - Cerca nelle issue e discussions
-2. **Valuta se è in-scope** - La feature ha senso per il progetto?
-3. **Considera alternative** - Ci sono modi diversi per raggiungere lo stesso obiettivo?
+1. **Check if it doesn't exist already** - Search in issues and discussions
+2. **Evaluate if it's in-scope** - Does the feature make sense for the project?
+3. **Consider alternatives** - Are there different ways to achieve the same goal?
 
-### Come proporre
+### How to Propose
 
-Apri una **GitHub Discussion** o **Issue** con:
+Open a **GitHub Discussion** or **Issue** with:
 
-**Template Feature Request:**
+**Feature Request Template:**
 
 ```markdown
 ## Feature Description
-[Descrizione chiara della feature proposta]
+[Clear description of the proposed feature]
 
 ## Problem it Solves
-[Quale problema risolve? Perché è utile?]
+[What problem does it solve? Why is it useful?]
 
 ## Proposed Solution
-[Come pensi dovrebbe funzionare?]
+[How do you think it should work?]
 
 ## Alternatives Considered
-[Hai considerato altre soluzioni?]
+[Have you considered other solutions?]
 
 ## Additional Context
-[Screenshot, esempi, link, etc.]
+[Screenshots, examples, links, etc.]
 
 ## Implementation Ideas
-[Se hai idee su come implementarla]
+[If you have ideas on how to implement it]
 ```
 
 ---
 
-## 🔀 Pull Request
+## 🔀 Pull Requests
 
-### Setup Ambiente
+### Environment Setup
 
 ```bash
-# Fork il repository su GitHub
-# Poi clona il tuo fork
-git clone https://github.com/TUO_USERNAME/PiPassive.git
+# Fork the repository on GitHub
+# Then clone your fork
+git clone https://github.com/YOUR_USERNAME/PiPassive.git
 cd PiPassive
 
-# Aggiungi upstream remote
+# Add upstream remote
 git remote add upstream https://github.com/ORIGINAL_OWNER/PiPassive.git
 
-# Crea un branch per la tua feature
-git checkout -b feature/nome-feature
+# Create a branch for your feature
+git checkout -b feature/feature-name
 ```
 
 ### Workflow
 
-1. **Crea un branch** per la tua modifica
-2. **Fai le tue modifiche** seguendo le guidelines
-3. **Testa accuratamente** su Raspberry Pi se possibile
-4. **Commit con messaggi chiari**
-5. **Push al tuo fork**
-6. **Apri una Pull Request**
+1. **Create a branch** for your changes
+2. **Make your changes** following the guidelines
+3. **Test thoroughly** on Raspberry Pi if possible
+4. **Commit with clear messages**
+5. **Push to your fork**
+6. **Open a Pull Request**
 
 ### Commit Messages
 
-Usa commit messages descrittivi:
+Use descriptive commit messages:
 
 ```bash
 # ✅ GOOD
@@ -156,7 +156,7 @@ git commit -m "update"
 git commit -m "changes"
 ```
 
-### Format Commit Messages
+### Commit Message Format
 
 ```
 <type>: <subject>
@@ -167,19 +167,19 @@ git commit -m "changes"
 ```
 
 **Types:**
-- `feat`: Nuova feature
+- `feat`: New feature
 - `fix`: Bug fix
-- `docs`: Documentazione
-- `style`: Formatting, manca semicolon, etc (no code change)
-- `refactor`: Refactoring del codice
-- `test`: Aggiunta o modifica test
-- `chore`: Manutenzione, dipendenze, etc
+- `docs`: Documentation
+- `style`: Formatting, missing semicolon, etc (no code change)
+- `refactor`: Code refactoring
+- `test`: Adding or modifying tests
+- `chore`: Maintenance, dependencies, etc
 
 ### Pull Request Template
 
 ```markdown
 ## Description
-[Descrizione chiara delle modifiche]
+[Clear description of the changes]
 
 ## Type of Change
 - [ ] Bug fix
@@ -188,24 +188,24 @@ git commit -m "changes"
 - [ ] Documentation update
 
 ## Testing
-[Come hai testato le modifiche?]
+[How did you test the changes?]
 
-- [ ] Testato su Raspberry Pi 3
-- [ ] Testato su Raspberry Pi 4
-- [ ] Testato su Raspberry Pi 5
-- [ ] Scripts eseguiti con successo
-- [ ] Documentazione aggiornata
+- [ ] Tested on Raspberry Pi 3
+- [ ] Tested on Raspberry Pi 4
+- [ ] Tested on Raspberry Pi 5
+- [ ] Scripts executed successfully
+- [ ] Documentation updated
 
 ## Checklist
-- [ ] Il mio codice segue lo stile del progetto
-- [ ] Ho commentato il codice dove necessario
-- [ ] Ho aggiornato la documentazione
-- [ ] Le mie modifiche non generano nuovi warning
-- [ ] Ho testato localmente le modifiche
-- [ ] Ho aggiunto test se applicabile
+- [ ] My code follows the project style
+- [ ] I have commented the code where necessary
+- [ ] I have updated the documentation
+- [ ] My changes do not generate new warnings
+- [ ] I have tested the changes locally
+- [ ] I have added tests if applicable
 
 ## Screenshots
-[Se applicabile]
+[If applicable]
 
 ## Related Issues
 Fixes #123
@@ -308,25 +308,25 @@ command --with-flags
 
 ### Test Checklist
 
-Prima di fare PR, testa:
+Before making PR, test:
 
-- [ ] Scripts eseguono senza errori
-- [ ] Permessi corretti (chmod +x per .sh)
-- [ ] Variabili nel .env funzionano
-- [ ] Container si avviano correttamente
-- [ ] Logs non mostrano errori
-- [ ] Dashboard mostra info corrette
-- [ ] Backup e restore funzionano
-- [ ] Documentazione è aggiornata
+- [ ] Scripts execute without errors
+- [ ] Correct permissions (chmod +x for .sh)
+- [ ] Variables in .env work
+- [ ] Containers start correctly
+- [ ] Logs don't show errors
+- [ ] Dashboard shows correct info
+- [ ] Backup and restore work
+- [ ] Documentation is updated
 
-### Test su Hardware
+### Hardware Testing
 
-Se possibile, testa su:
-- Raspberry Pi 3 (architettura ARMv7)
-- Raspberry Pi 4 (architettura ARM64)
-- Raspberry Pi 5 (architettura ARM64)
+If possible, test on:
+- Raspberry Pi 3 (ARMv7 architecture)
+- Raspberry Pi 4 (ARM64 architecture)
+- Raspberry Pi 5 (ARM64 architecture)
 
-### Test Manual Flow
+### Manual Flow Testing
 
 ```bash
 # Clone fresh
@@ -349,39 +349,39 @@ cd PiPassive
 ./backup.sh
 ./restore.sh backups/[latest]
 
-# Test dashboard
-./dashboard.sh
+# Test web dashboard
+# Access http://pipassive.local in your browser
 ```
 
 ---
 
 ## 📚 Documentation
 
-### Quando Aggiornare la Documentazione
+### When to Update Documentation
 
-Aggiorna la documentazione quando:
-- Aggiungi nuova feature
-- Cambi comportamento esistente
-- Aggiungi nuove dipendenze
-- Modifichi configurazione
-- Aggiungi nuovi comandi
+Update documentation when:
+- You add new features
+- You change existing behavior
+- You add new dependencies
+- You modify configuration
+- You add new commands
 
-### File da Aggiornare
+### Files to Update
 
-- `README.md` - Per feature principali
-- `QUICKSTART.md` - Se cambi workflow base
-- `docs/services.md` - Per nuovi servizi
-- `docs/troubleshooting.md` - Per nuovi problemi comuni
-- `docs/advanced.md` - Per configurazioni avanzate
-- `CHANGELOG.md` - Per ogni modifica rilevante
+- `README.md` - For main features
+- `QUICKSTART.md` - If you change basic workflow
+- `docs/services.md` - For new services
+- `docs/troubleshooting.md` - For new common problems
+- `docs/advanced.md` - For advanced configurations
+- `CHANGELOG.md` - For every significant change
 
 ---
 
 ## 🌍 Translations
 
-Contributi per traduzioni sono benvenuti!
+Translation contributions are welcome!
 
-Crea una directory `docs/translations/[lang]/` e traduci:
+Create a directory `docs/translations/[lang]/` and translate:
 - README.md
 - QUICKSTART.md
 - docs/services.md
@@ -389,53 +389,53 @@ Crea una directory `docs/translations/[lang]/` e traduci:
 
 ---
 
-## ❓ Domande?
+## ❓ Questions?
 
-- **General Questions:** Apri una Discussion su GitHub
-- **Bug Reports:** Apri una Issue
-- **Feature Requests:** Apri una Discussion o Issue
-- **Security Issues:** Vedi SECURITY.md (se disponibile)
+- **General Questions:** Open a Discussion on GitHub
+- **Bug Reports:** Open an Issue
+- **Feature Requests:** Open a Discussion or Issue
+- **Security Issues:** See SECURITY.md (if available)
 
 ---
 
 ## 📜 Code of Conduct
 
-### Nostri Standard
+### Our Standards
 
-- ✅ Essere rispettosi e inclusivi
-- ✅ Accettare feedback costruttivo
-- ✅ Focalizzarsi su cosa è meglio per la community
-- ✅ Mostrare empatia verso altri membri
+- ✅ Be respectful and inclusive
+- ✅ Accept constructive feedback
+- ✅ Focus on what's best for the community
+- ✅ Show empathy towards other members
 
-- ❌ Trolling, insulti o attacchi personali
-- ❌ Harrassment pubblico o privato
-- ❌ Pubblicare informazioni private altrui
-- ❌ Condotta non professionale
+- ❌ Trolling, insults or personal attacks
+- ❌ Public or private harassment
+- ❌ Publishing others' private information
+- ❌ Unprofessional conduct
 
 ### Enforcement
 
-Comportamenti inaccettabili possono essere segnalati aprendo una issue.
-I maintainer si riservano il diritto di rimuovere commenti e ban utenti.
+Unacceptable behaviors can be reported by opening an issue.
+Maintainers reserve the right to remove comments and ban users.
 
 ---
 
-## 🎉 Riconoscimenti
+## 🎉 Acknowledgments
 
-Tutti i contributors saranno menzionati nel README!
+All contributors will be mentioned in the README!
 
-Per contributi significativi:
-- Menzione nella release notes
-- Badge "Contributor" sul profilo
+For significant contributions:
+- Mention in release notes
+- "Contributor" badge on profile
 - Eternal gratitude! 🙏
 
 ---
 
 ## 📄 License
 
-Contribuendo a PiPassive, accetti che i tuoi contributi saranno rilasciati sotto la MIT License.
+By contributing to PiPassive, you agree that your contributions will be released under the MIT License.
 
 ---
 
-**Grazie per contribuire a PiPassive!** 🍓
+**Thank you for contributing to PiPassive!** 🍓
 
-Ogni contribuzione, grande o piccola, è apprezzata! 💚
+Every contribution, big or small, is appreciated! 💚

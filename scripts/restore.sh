@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ################################################################################
-# PiPassive - Script di Ripristino
-# Ripristina configurazioni e dati da backup
+# PiPassive - Restore Script
+# Restores configurations and data from backup
 ################################################################################
 
 set -e
@@ -42,26 +42,26 @@ print_header() {
     echo -e "${CYAN}"
     cat << "EOF"
     ╔════════════════════════════════════════════════════════╗
-    ║         PiPassive - Ripristino Configurazione          ║
+    ║         PiPassive - Restore Configuration              ║
     ╚════════════════════════════════════════════════════════╝
 EOF
     echo -e "${NC}"
 }
 
-# Controlla argomenti
+# Check arguments
 check_arguments() {
     if [[ -z "$BACKUP_FILE" ]]; then
-        log_error "Specifica il file di backup da ripristinare!"
+        log_error "Specify the backup file to restore!"
         echo
-        echo -e "${CYAN}Uso:${NC}"
-        echo -e "  ./restore.sh <file_backup.tar.gz>"
+        echo -e "${CYAN}Usage:${NC}"
+        echo -e "  ./restore.sh <backup_file.tar.gz>"
         echo
         list_available_backups
         exit 1
     fi
-    
+
     if [[ ! -f "$BACKUP_FILE" ]]; then
-        log_error "File di backup non trovato: $BACKUP_FILE"
+        log_error "Backup file not found: $BACKUP_FILE"
         echo
         list_available_backups
         exit 1
@@ -159,7 +159,7 @@ restore_files() {
     
     # Ripristina docker-compose.yml
     if [[ -f "$source/docker-compose.yml" ]]; then
-        cp "$source/docker-compose.yml" docker-compose.yml
+        cp "$source/docker-compose.yml" config/docker-compose.yml
         log_success "File docker-compose.yml ripristinato"
     fi
     

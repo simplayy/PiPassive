@@ -141,19 +141,23 @@ The system includes:
 ```
 PiPassive/
 ├── README.md                 # This file
-├── install.sh               # Main installation script
-├── setup.sh                 # Interactive configuration script
-├── manage.sh                # Service management script
-├── dashboard.sh             # Monitoring dashboard
-├── docker-compose.yml       # Docker Compose configuration
+├── scripts/install.sh       # Main installation script
+├── scripts/setup.sh         # Interactive configuration script
+├── scripts/manage.sh        # Service management script
+├── scripts/dashboard.sh     # Monitoring dashboard
+├── config/docker-compose.yml # Docker Compose configuration
 ├── .env.example             # Environment variables template
-├── backup.sh                # Backup script
-├── restore.sh               # Restore script
+├── scripts/backup.sh        # Backup script
+├── scripts/restore.sh       # Restore script
 ├── docs/                    # Detailed documentation
 │   ├── services.md          # Guide to obtain API keys
 │   ├── troubleshooting.md   # Troubleshooting
 │   └── advanced.md          # Advanced configurations
-└── configs/                 # Service configurations
+├── src/                     # Source code (web server, HTML)
+├── config/                  # Configuration files
+│   └── configs/             # Service configurations
+├── data/                    # Service data and logs
+└── logs/                    # System logs
     └── [service]/           # Config for each service
 ```
 
