@@ -57,22 +57,22 @@ class APIHandler(SimpleHTTPRequestHandler):
             result = self.test_config(data)
             self.send_json(result)
         elif self.path == '/api/all/start':
-            result = self.run_command('cd /home/pi/PiPassive && ./manage.sh start')
+            result = self.run_command('./manage.sh start')
             self.send_json({'success': result[0] == 0, 'message': 'Tutti i servizi avviati'})
         elif self.path == '/api/all/stop':
-            result = self.run_command('cd /home/pi/PiPassive && ./manage.sh stop')
+            result = self.run_command('./manage.sh stop')
             self.send_json({'success': result[0] == 0, 'message': 'Tutti i servizi fermati'})
         elif self.path.startswith('/api/service/start/'):
             service = self.path.split('/')[-1]
-            result = self.run_command(f'cd /home/pi/PiPassive && docker compose start {service}')
+            result = self.run_command(f'docker compose start {service}')
             self.send_json({'success': result[0] == 0})
         elif self.path.startswith('/api/service/stop/'):
             service = self.path.split('/')[-1]
-            result = self.run_command(f'cd /home/pi/PiPassive && docker compose stop {service}')
+            result = self.run_command(f'docker compose stop {service}')
             self.send_json({'success': result[0] == 0})
         elif self.path.startswith('/api/service/restart/'):
             service = self.path.split('/')[-1]
-            result = self.run_command(f'cd /home/pi/PiPassive && docker compose restart {service}')
+            result = self.run_command(f'docker compose restart {service}')
             self.send_json({'success': result[0] == 0})
         else:
             self.send_error(404)
@@ -159,7 +159,7 @@ class APIHandler(SimpleHTTPRequestHandler):
                 capture_output=True,
                 text=True,
                 timeout=10,
-                cwd='/home/pi/PiPassive'
+                cwd='.'
             )
             return result.stdout if result.returncode == 0 else 'Errore nel caricamento dei logs'
         except Exception as e:
@@ -177,7 +177,7 @@ class APIHandler(SimpleHTTPRequestHandler):
 
     def is_configured(self):
         """Verifica se esiste una configurazione valida"""
-        env_file = '/home/pi/PiPassive/.env'
+        env_file = '.env'
 
         if not Path(env_file).exists():
             return False
@@ -202,7 +202,7 @@ class APIHandler(SimpleHTTPRequestHandler):
     def load_env_config(self):
         """Carica la configurazione dal file .env"""
         config = {}
-        env_file = '/home/pi/PiPassive/.env'
+        env_file = '.env'
         
         if Path(env_file).exists():
             try:
@@ -219,7 +219,7 @@ class APIHandler(SimpleHTTPRequestHandler):
 
     def save_env_config(self, config):
         """Salva la configurazione nel file .env"""
-        env_file = '/home/pi/PiPassive/.env'
+        env_file = '.env'
         
         try:
             # Carica la configurazione esistente
@@ -297,7 +297,7 @@ def get_local_ip():
 def main():
     os.chdir('/home/pi/PiPassive')
 
-    port = 8888
+    port = 80
     ip = get_local_ip()
     hostname = 'pipassive.local'
 

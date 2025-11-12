@@ -82,49 +82,15 @@ EOF
     echo -e "${NC}"
 }
 
-# Crea servizio systemd per web server se non esiste
-setup_web_service() {
-    if [[ ! -f "/etc/systemd/system/pipassive-web.service" ]]; then
-        log_info "Creazione servizio systemd per web server..."
-        sudo tee /etc/systemd/system/pipassive-web.service > /dev/null << 'EOF'
-[Unit]
-Description=PiPassive Web Dashboard
-After=network.target
-Requires=network.target
-
-[Service]
-Type=simple
-User=pi
-Group=pi
-WorkingDirectory=/home/pi/PiPassive
-ExecStart=/usr/bin/python3 /home/pi/PiPassive/web-server.py
-Restart=always
-RestartSec=5
-Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-[Install]
-WantedBy=multi-user.target
-EOF
-        sudo systemctl daemon-reload
-        sudo systemctl enable pipassive-web.service
-        log_success "Servizio web creato e abilitato per auto-avvio"
-    else
-        # Se il servizio esiste ma non è abilitato, abilitarlo
-        if ! sudo systemctl is-enabled --quiet pipassive-web.service 2>/dev/null; then
-            log_info "Abilitazione servizio web per auto-avvio..."
-            sudo systemctl enable pipassive-web.service
-            log_success "Servizio web abilitato per auto-avvio"
-        fi
-    fi
-}
+# Web service is now created during installation (install.sh)
+# This function has been removed to avoid conflicts
 
 # Avvia tutti i servizi
 start_all() {
     log_info "Avvio di tutti i servizi..."
     echo
 
-    # Assicurati che il servizio web esista e sia abilitato
-    setup_web_service
+    # Web service is created during installation
 
     # Avvia servizio web
     log_info "Avvio del web server..."
@@ -140,14 +106,14 @@ start_all() {
             sudo systemctl status pipassive-web.service --no-pager -l || true
         fi
     fi
-
+    
     docker compose up -d
-
+    
     echo
     log_success "Tutti i container Docker sono stati avviati!"
     echo
-    log_info "Dashboard web sempre attivo: http://pipassive.local:8888"
-    log_info "Configurazione: http://pipassive.local:8888/setup"
+    log_info "Dashboard web sempre attivo: http://pipassive.local"
+    log_info "Configurazione: http://pipassive.local/setup"
     log_info ""
     log_info "Usa './manage.sh status' per verificare lo stato"
 }
@@ -176,9 +142,9 @@ stop_all() {
         sudo systemctl stop pipassive-web.service
         log_info "Web server fermato"
     fi
-
+    
     docker compose down
-
+    
     log_success "Tutti i servizi sono stati fermati!"
 }
 
@@ -206,9 +172,9 @@ restart_all() {
         sudo systemctl restart pipassive-web.service
         log_info "Web server riavviato"
     fi
-
+    
     docker compose restart
-
+    
     log_success "Tutti i servizi sono stati riavviati!"
 }
 
@@ -261,7 +227,7 @@ show_status() {
     
     # Web Server
     if sudo systemctl is-active --quiet pipassive-web.service 2>/dev/null; then
-        echo -e "  ${GREEN}✓${NC} Web Server ${GREEN}(running)${NC} - http://pipassive.local:8888"
+        echo -e "  ${GREEN}✓${NC} Web Server ${GREEN}(running)${NC} - http://pipassive.local"
     else
         echo -e "  ${YELLOW}○${NC} Web Server (fermato)"
         echo -e "     Avvia: ${CYAN}./manage.sh start${NC}"

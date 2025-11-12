@@ -8,8 +8,11 @@
 set -e
 
 # Source environment variables
-if [[ -f "/home/pi/PiPassive/.env" ]]; then
-    export $(cat /home/pi/PiPassive/.env | xargs)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+if [[ -f "$PROJECT_DIR/.env" ]]; then
+    export $(cat "$PROJECT_DIR/.env" | xargs)
 fi
 
 # Colors

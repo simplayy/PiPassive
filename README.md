@@ -54,7 +54,7 @@ The easiest and most intuitive way:
 ```bash
 # Web dashboard is always active automatically
 # Access directly in your browser
-http://pipassive.local:8888/setup
+http://pipassive.local/setup
 ```
 
 In the browser you'll find a complete form to configure:
@@ -117,7 +117,7 @@ nano .env
 Access the web dashboard to monitor your services in real time:
 
 ```
-http://pipassive.local:8888
+http://pipassive.local
 ```
 
 The dashboard includes:

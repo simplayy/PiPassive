@@ -115,21 +115,21 @@ ask_input() {
     # Stampa il prompt con i colori (non catturato in ask_input)
     if [[ "$is_password" == "true" ]]; then
         {
-            echo -ne "${CYAN}${prompt}${NC}"
-            if [[ -n "$default_value" ]]; then
-                echo -ne " ${YELLOW}[attuale: ****]${NC}"
-            fi
-            echo -ne ": "
+        echo -ne "${CYAN}${prompt}${NC}"
+        if [[ -n "$default_value" ]]; then
+            echo -ne " ${YELLOW}[attuale: ****]${NC}"
+        fi
+        echo -ne ": "
         } >&2
         read -rs value
         echo "" >&2
     else
         {
-            echo -ne "${CYAN}${prompt}${NC}"
-            if [[ -n "$default_value" ]]; then
-                echo -ne " ${YELLOW}[${default_value}]${NC}"
-            fi
-            echo -ne ": "
+        echo -ne "${CYAN}${prompt}${NC}"
+        if [[ -n "$default_value" ]]; then
+            echo -ne " ${YELLOW}[${default_value}]${NC}"
+        fi
+        echo -ne ": "
         } >&2
         read -r value
     fi
@@ -578,8 +578,8 @@ main() {
     echo
     echo -e "${BLUE}Prossimi passi:${NC}"
     echo -e "  1. Avvia i servizi: ${GREEN}./manage.sh start${NC}"
-    echo -e "  2. Accedi a: ${CYAN}http://pipassive.local:8888${NC}"
-    echo -e "  3. Configura da web: ${CYAN}http://pipassive.local:8888/setup${NC}"
+    echo -e "  2. Accedi a: ${CYAN}http://pipassive.local${NC}"
+    echo -e "  3. Configura da web: ${CYAN}http://pipassive.local/setup${NC}"
     echo
     echo -e "${CYAN}Servizi disponibili:${NC}"
     echo -e "  • 8 servizi Docker (Honeygain, Pawns, PacketStream, Repocket, EarnFM, MystNode, PacketShare, TraffMonetizer)"

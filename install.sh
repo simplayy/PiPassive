@@ -58,7 +58,7 @@ check_root() {
 # Check operating system
 check_system() {
     log_info "Checking operating system..."
-
+    
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
         OS=$ID
@@ -68,11 +68,11 @@ check_system() {
         log_error "Unsupported operating system!"
         exit 1
     fi
-
+    
     # Check architecture
     ARCH=$(uname -m)
     log_info "Architecture: $ARCH"
-
+    
     if [[ "$ARCH" != "armv7l" && "$ARCH" != "aarch64" && "$ARCH" != "x86_64" ]]; then
         log_warning "Untested architecture: $ARCH"
         read -p "Do you want to continue anyway? (y/n) " -n 1 -r
@@ -115,20 +115,20 @@ install_docker() {
         log_success "Docker already installed ($(docker --version))"
         return
     fi
-
+    
     log_info "Installing Docker..."
-
+    
     # Remove old versions
     sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
-
+    
     # Add Docker repository
     curl -fsSL https://get.docker.com -o get-docker.sh
     sudo sh get-docker.sh
     rm get-docker.sh
-
+    
     # Add user to docker group
     sudo usermod -aG docker $USER
-
+    
     log_success "Docker installed!"
     log_warning "You will need to logout and login to apply docker group permissions"
 }
@@ -136,22 +136,22 @@ install_docker() {
 # Install Docker Compose
 install_docker_compose() {
     log_info "Checking Docker Compose..."
-
+    
     # Docker Compose v2 is included in Docker Desktop and recent versions
     if docker compose version &> /dev/null; then
         log_success "Docker Compose v2 already available ($(docker compose version))"
         return
     fi
-
+    
     # Fallback for manual installation
     log_info "Installing Docker Compose v2..."
-
+    
     DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
     mkdir -p $DOCKER_CONFIG/cli-plugins
-
+    
     # Download Docker Compose
     COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r '.tag_name')
-
+    
     if [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
         COMPOSE_ARCH="aarch64"
     elif [[ "$ARCH" == "armv7l" ]]; then
@@ -161,12 +161,12 @@ install_docker_compose() {
     else
         COMPOSE_ARCH="x86_64"
     fi
-
+    
     curl -SL "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${COMPOSE_ARCH}" \
         -o $DOCKER_CONFIG/cli-plugins/docker-compose
-
+    
     chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
-
+    
     log_success "Docker Compose installed!"
 }
 
@@ -174,7 +174,11 @@ install_docker_compose() {
 setup_web_service() {
     log_info "Setting up web service systemd..."
 
-    sudo tee /etc/systemd/system/pipassive-web.service > /dev/null << 'EOF'
+    # Get current directory and user for dynamic paths
+    CURRENT_DIR="$(pwd)"
+    CURRENT_USER="$(whoami)"
+
+    sudo tee /etc/systemd/system/pipassive-web.service > /dev/null << EOF
 [Unit]
 Description=PiPassive Web Dashboard
 After=network.target docker.service
@@ -182,14 +186,14 @@ Requires=network.target
 
 [Service]
 Type=simple
-User=pi
-Group=pi
-WorkingDirectory=/home/pi/PiPassive
-ExecStart=/usr/bin/python3 /home/pi/PiPassive/web-server.py
+User=root
+Group=root
+WorkingDirectory=${CURRENT_DIR}
+ExecStart=/usr/bin/python3 ${CURRENT_DIR}/web-server.py
 Restart=always
 RestartSec=5
 Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-Environment=PYTHONPATH=/home/pi/PiPassive
+Environment=PYTHONPATH=${CURRENT_DIR}
 
 [Install]
 WantedBy=multi-user.target
@@ -205,19 +209,19 @@ EOF
 # Create necessary directories
 create_directories() {
     log_info "Creating directories..."
-
+    
     mkdir -p configs/{honeygain,earnapp,pawns,packetstream,traffmonetizer,repocket,earnfm,mystnode,packetshare}
     mkdir -p data/{honeygain,earnapp,pawns,packetstream,traffmonetizer,repocket,earnfm,mystnode,packetshare}
     mkdir -p logs
     mkdir -p backups
-
+    
     log_success "Directories created!"
 }
 
 # Copy example files
 setup_config_files() {
     log_info "Setting up configuration files..."
-
+    
     if [[ ! -f .env ]]; then
         if [[ -f .env.example ]]; then
             cp .env.example .env
@@ -234,13 +238,13 @@ setup_config_files() {
 # Optimizations for Raspberry Pi
 optimize_raspberry_pi() {
     log_info "Applying optimizations for Raspberry Pi..."
-
+    
     # Increase memory available for containers
     if ! grep -q "vm.max_map_count" /etc/sysctl.conf; then
         echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
         sudo sysctl -p
     fi
-
+    
     # Optimize swap for Raspberry Pi
     if [[ -f /etc/dphys-swapfile ]]; then
         sudo dphys-swapfile swapoff || true
@@ -248,7 +252,7 @@ optimize_raspberry_pi() {
         sudo dphys-swapfile setup || true
         sudo dphys-swapfile swapon || true
     fi
-
+    
     log_success "Optimizations applied!"
 }
 
@@ -277,7 +281,7 @@ setup_hostname_mdns() {
 # Test Docker installation
 test_docker() {
     log_info "Testing Docker installation..."
-
+    
     # Check if we can run docker without sudo
     if docker ps &> /dev/null; then
         log_success "Docker works correctly!"
@@ -293,13 +297,13 @@ test_docker() {
 # Make scripts executable
 make_scripts_executable() {
     log_info "Setting script permissions..."
-
+    
     chmod +x setup.sh 2>/dev/null || true
     chmod +x manage.sh 2>/dev/null || true
     chmod +x dashboard.sh 2>/dev/null || true
     chmod +x backup.sh 2>/dev/null || true
     chmod +x restore.sh 2>/dev/null || true
-
+    
     log_success "Permissions set!"
 }
 
@@ -315,7 +319,7 @@ print_summary() {
     echo -e "  ${YELLOW}Choose how to configure services:${NC}"
     echo
     echo -e "  ${GREEN}OPTION 1 - Via Web (Recommended):${NC}"
-    echo -e "    1. Open browser: ${GREEN}http://pipassive.local:8888/setup${NC}"
+    echo -e "    1. Open browser: ${GREEN}http://pipassive.local/setup${NC}"
     echo -e "    2. Fill the form and save"
     echo
     echo -e "  ${GREEN}OPTION 2 - Via Terminal (CLI):${NC}"
@@ -323,9 +327,9 @@ print_summary() {
     echo -e "    2. Answer the interactive questions"
     echo
     echo -e "  ${YELLOW}Service management:${NC}"
-    echo -e "    • Web Dashboard always active: ${GREEN}http://pipassive.local:8888${NC}"
+    echo -e "    • Web Dashboard always active: ${GREEN}http://pipassive.local${NC}"
     echo -e "    • Start Docker containers: ${GREEN}./manage.sh start${NC}"
-    echo -e "    • Quick Links: ${GREEN}http://pipassive.local:8888/links${NC}"
+    echo -e "    • Quick Links: ${GREEN}http://pipassive.local/links${NC}"
     echo
     echo -e "${YELLOW}⚠️  IMPORTANT - MystNode:${NC}"
     echo -e "    Complete configuration at: ${GREEN}http://pipassive.local:4449${NC}"
@@ -343,13 +347,13 @@ print_summary() {
 # Main
 main() {
     print_logo
-
+    
     log_info "Starting PiPassive installation..."
     echo
-
+    
     check_root
     check_system
-
+    
     echo
     read -p "Proceed with installation? (y/n) " -n 1 -r
     echo
@@ -357,35 +361,35 @@ main() {
         log_info "Installation cancelled."
         exit 0
     fi
-
+    
     echo
     log_info "=== PHASE 1: System Update ==="
     update_system
-
+    
     echo
     log_info "=== PHASE 2: Dependencies Installation ==="
     install_dependencies
-
+    
     echo
     log_info "=== PHASE 3: Docker Installation ==="
     install_docker
-
+    
     echo
     log_info "=== PHASE 4: Docker Compose Installation ==="
     install_docker_compose
-
+    
     echo
     log_info "=== PHASE 5: Directory Creation ==="
     create_directories
-
+    
     echo
     log_info "=== PHASE 6: Configuration Setup ==="
     setup_config_files
-
+    
     echo
     log_info "=== PHASE 7: System Optimizations ==="
     optimize_raspberry_pi
-
+    
     echo
     log_info "=== PHASE 8: Hostname and mDNS Configuration ==="
     setup_hostname_mdns
@@ -393,7 +397,7 @@ main() {
     echo
     log_info "=== PHASE 9: Permissions Setup ==="
     make_scripts_executable
-
+    
     echo
     log_info "=== PHASE 10: Web Service Configuration ==="
     setup_web_service
@@ -401,7 +405,7 @@ main() {
     echo
     log_info "=== PHASE 11: Installation Test ==="
     test_docker
-
+    
     echo
     print_summary
 }
