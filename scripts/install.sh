@@ -46,12 +46,13 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Check if running as root
-check_root() {
-    if [[ $EUID -eq 0 ]]; then
-        log_error "Do not run this script as root or with sudo!"
-        log_info "The script will request sudo permissions when necessary."
-        exit 1
+# Check and request sudo permissions
+check_sudo() {
+    if [[ $EUID -ne 0 ]]; then
+        log_info "This script requires root permissions."
+        log_info "Re-running with sudo..."
+        sudo "$0" "$@"
+        exit $?
     fi
 }
 
@@ -86,15 +87,15 @@ check_system() {
 # Update system
 update_system() {
     log_info "Updating system..."
-    sudo apt-get update -qq
-    sudo apt-get upgrade -y -qq
+    apt-get update -qq
+    apt-get upgrade -y -qq
     log_success "System updated!"
 }
 
 # Install dependencies
 install_dependencies() {
     log_info "Installing dependencies..."
-    sudo apt-get install -y -qq \
+    apt-get install -y -qq \
         apt-transport-https \
         ca-certificates \
         curl \
@@ -119,18 +120,40 @@ install_docker() {
     log_info "Installing Docker..."
     
     # Remove old versions
-    sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
+    apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
     
-    # Add Docker repository
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    sudo sh get-docker.sh
-    rm get-docker.sh
+    # Ensure /tmp has proper permissions
+    chmod 1777 /tmp || true
+    
+    # Add Docker repository using direct apt method (more reliable on RPi)
+    log_info "Downloading Docker installation script..."
+    if ! curl --max-time 300 --retry 3 -fsSL https://get.docker.com -o /tmp/get-docker.sh; then
+        log_error "Failed to download Docker installation script"
+        log_info "Trying alternative installation method..."
+        apt-get install -y -qq docker.io || {
+            log_error "Docker installation failed"
+            exit 1
+        }
+    else
+        log_info "Running Docker installation script..."
+        sh /tmp/get-docker.sh || {
+            log_error "Docker installation script failed"
+            exit 1
+        }
+        rm -f /tmp/get-docker.sh
+    fi
+    
+    # Find the regular user (if running with sudo)
+    REGULAR_USER="${SUDO_USER:-$USER}"
     
     # Add user to docker group
-    sudo usermod -aG docker $USER
-    
-    log_success "Docker installed!"
-    log_warning "You will need to logout and login to apply docker group permissions"
+    if id "$REGULAR_USER" &>/dev/null 2>&1; then
+        usermod -aG docker "$REGULAR_USER"
+        log_success "Docker installed!"
+        log_warning "User '$REGULAR_USER' added to docker group"
+    else
+        log_success "Docker installed!"
+    fi
 }
 
 # Install Docker Compose
@@ -176,9 +199,9 @@ setup_web_service() {
 
     # Get current directory and user for dynamic paths
     CURRENT_DIR="$(pwd)"
-    CURRENT_USER="$(whoami)"
+    CURRENT_USER="${SUDO_USER:-root}"
 
-    sudo tee /etc/systemd/system/pipassive-web.service > /dev/null << EOF
+    tee /etc/systemd/system/pipassive-web.service > /dev/null << EOF
 [Unit]
 Description=PiPassive Web Dashboard
 After=network.target docker.service
@@ -199,9 +222,9 @@ Environment=PYTHONPATH=${CURRENT_DIR}/src
 WantedBy=multi-user.target
 EOF
 
-    sudo systemctl daemon-reload
-    sudo systemctl enable pipassive-web.service
-    sudo systemctl start pipassive-web.service
+    systemctl daemon-reload
+    systemctl enable pipassive-web.service
+    systemctl start pipassive-web.service
 
     log_success "Web service configured and started automatically!"
 }
@@ -241,16 +264,16 @@ optimize_raspberry_pi() {
     
     # Increase memory available for containers
     if ! grep -q "vm.max_map_count" /etc/sysctl.conf; then
-        echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
-        sudo sysctl -p
+        echo "vm.max_map_count=262144" | tee -a /etc/sysctl.conf
+        sysctl -p
     fi
     
     # Optimize swap for Raspberry Pi
     if [[ -f /etc/dphys-swapfile ]]; then
-        sudo dphys-swapfile swapoff || true
-        sudo sed -i 's/CONF_SWAPSIZE=100/CONF_SWAPSIZE=2048/' /etc/dphys-swapfile 2>/dev/null || true
-        sudo dphys-swapfile setup || true
-        sudo dphys-swapfile swapon || true
+        dphys-swapfile swapoff || true
+        sed -i 's/CONF_SWAPSIZE=100/CONF_SWAPSIZE=2048/' /etc/dphys-swapfile 2>/dev/null || true
+        dphys-swapfile setup || true
+        dphys-swapfile swapon || true
     fi
     
     log_success "Optimizations applied!"
@@ -264,15 +287,15 @@ setup_hostname_mdns() {
     CURRENT_HOSTNAME=$(hostname)
     if [[ "$CURRENT_HOSTNAME" != "pipassive" ]]; then
         log_info "Changing hostname from '$CURRENT_HOSTNAME' to 'pipassive'..."
-        sudo hostnamectl set-hostname pipassive
+        hostnamectl set-hostname pipassive
         log_success "Hostname set to 'pipassive'"
     else
         log_success "Hostname already set to 'pipassive'"
     fi
 
     # Enable and restart Avahi to register the new hostname
-    sudo systemctl enable avahi-daemon 2>/dev/null || true
-    sudo systemctl restart avahi-daemon
+    systemctl enable avahi-daemon 2>/dev/null || true
+    systemctl restart avahi-daemon
     sleep 2
 
     log_success "mDNS configured for 'pipassive.local'"
@@ -348,10 +371,12 @@ print_summary() {
 main() {
     print_logo
     
+    # First: Check and request sudo permissions
+    check_sudo "$@"
+    
     log_info "Starting PiPassive installation..."
     echo
     
-    check_root
     check_system
     
     echo
