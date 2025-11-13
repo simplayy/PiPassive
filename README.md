@@ -34,7 +34,14 @@ cd PiPassive
 chmod +x install.sh
 
 # Run automatic installation
+# The script will automatically request sudo permissions
 ./install.sh
+```
+
+Or run directly with sudo:
+
+```bash
+sudo ./install.sh
 ```
 
 The script will automatically install:
