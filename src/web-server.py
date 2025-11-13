@@ -295,7 +295,9 @@ def get_local_ip():
 
 
 def main():
-    os.chdir('/home/pi/PiPassive')
+    # Determina automaticamente la directory del progetto (portabile su qualsiasi installazione)
+    script_dir = Path(__file__).parent.parent
+    os.chdir(script_dir)
 
     port = 80
     ip = get_local_ip()
